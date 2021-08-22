@@ -1,45 +1,37 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:aqb_api/aqb_api.dart';
+import 'package:postman_dio/postman_dio.dart';
 
 void main() {
-  final dio = Dio()
-    ..options = BaseOptions(
-        connectTimeout: 10000, sendTimeout: 10000, receiveTimeout: 10000);
+  final options = BaseOptions(
+      sendTimeout: 10000, connectTimeout: 10000, receiveTimeout: 10000);
+  final dio = Dio(options);
   final client = ConfigService(dio);
   final accountClient = AccountService(dio);
-  dio.interceptors.add(InterceptorsWrapper(onResponse: (res, handle) {
-    // print(
-    //     '<-- ${res.statusCode} ${(res.request != null ? (res.request.baseUrl + res.request.path) : 'URL')}');
-    // print('Headers:');
-    log('--> ${res.realUri.path}');
-    log('--> ${res.realUri.path}');
-    // res.headers?.forEach((k, v) => print('$k: $v'));
-    // ignore: avoid_print
-    print('Response: ${jsonEncode(res.data)}');
-    log('Response: ${jsonEncode(res.data)}');
-    // print('<-- END HTTP');
-  }));
+  dio.interceptors.add(PostmanDioLogger(enablePrint: true));
 
-  testAuth() async {
-    // final data = const EmailAuthData()
-    //     .copyWith(password: '123123123')
-    //     .copyWith(email: 'hoanghiep97@hotmail.com');
-    // final res = await accountClient.emailAuth(data);
-    // final account = res.responseData;
-    // final userId = account!.userId;
+  Future<bool> testAuth() async {
+    try {
+      final data = const EmailAuthData()
+          .copyWith(password: '123123123')
+          .copyWith(email: 'hoanghiep97@hotmail.com');
+      final res = await accountClient.emailAuth(data);
+      // final account = res.responseData;
+      // final userId = account!.userId;
 
-    // await accountClient.getAccessToken('data');
+      // await accountClient.getAccessToken('data');
 
-    // await accountClient.getReward(userId!);
-    await accountClient.getReward('userId!');
+      // await accountClient.getReward(userId!);
+      // final res = await accountClient.getReward('userId!');
+      return res.valid;
+    } catch (e) {
+      return false;
+    }
   }
 
-  testService() async {
+  Future<bool> testService() async {
     // final res = await client.getCountries();
     // final res = await client.getMealPlans();
     // final res = await client.getLanguages();
@@ -52,23 +44,18 @@ void main() {
     // final res = await client.getDistricts();
     // final res = await client.getAirportsByKW('Thai');
     // final res = await client.getFlightAirports('Thai');
-    // final res = await client.getResources(1, ['COMMON']);
-    final res = await client.getExchangeRate('thb', 'usd');
+    final res = await client.getResources(1, ['COMMON']);
+    // final res = await client.getResourceValue(1, 'CUISINE_AMERICAN');
+    // final res = await client.getResourceValue(1, '\'CUISINE_AMERICAN\'');
+    // final res =
+    // await client.getResourceValue(1, jsonEncode('CUISINE_AMERICAN'));
+    // final res = await client.getExchangeRate('thb', 'usd');
 
-    // ignore: avoid_print
-    print(res.responseData!.length);
-    // for (var element in res.responseData!) {
-    //   // ignore: avoid_print
-    //   print(element.toString());
-    // }
+    return res.valid;
   }
 
   test('adds one to input values', () async {
-    await testAuth();
-    // await testService();
-    final calculator = Calculator();
-    expect(calculator.addOne(2), 3);
-    expect(calculator.addOne(-7), -6);
-    expect(calculator.addOne(0), 1);
+    expect(await testService(), true);
+    expect(await testAuth(), true);
   });
 }

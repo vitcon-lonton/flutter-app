@@ -29,7 +29,10 @@ class _PaymentService implements PaymentService {
             .compose(_dio.options, '/CheckOut/ProcessPayment',
                 queryParameters: queryParameters, data: _data)
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = BaseResponse<PaymentResponse>.fromJson(_result.data!);
+    final value = BaseResponse<PaymentResponse>.fromJson(
+      _result.data!,
+      (json) => PaymentResponse.fromJson(json as Map<String, dynamic>),
+    );
     return value;
   }
 
@@ -69,7 +72,10 @@ class _AccountService implements AccountService {
             .compose(_dio.options, '/Reward/{userId}',
                 queryParameters: queryParameters, data: _data)
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = BaseResponse<Reward>.fromJson(_result.data!);
+    final value = BaseResponse<Reward>.fromJson(
+      _result.data!,
+      (json) => Reward.fromJson(json as Map<String, dynamic>),
+    );
     return value;
   }
 
@@ -86,7 +92,11 @@ class _AccountService implements AccountService {
             .compose(_dio.options, '/HelpType/GetByLangId/$language',
                 queryParameters: queryParameters, data: _data)
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = BaseResponse<List<Help>>.fromJson(_result.data!);
+    final value = BaseResponse<List<Help>>.fromJson(
+        _result.data!,
+        (json) => (json as List<dynamic>)
+            .map<Help>((i) => Help.fromJson(i as Map<String, dynamic>))
+            .toList());
     return value;
   }
 
@@ -103,7 +113,10 @@ class _AccountService implements AccountService {
             .compose(_dio.options, '/RequestTokenAuth',
                 queryParameters: queryParameters, data: _data)
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = BaseResponse<String>.fromJson(_result.data!);
+    final value = BaseResponse<String>.fromJson(
+      _result.data!,
+      (json) => json as String,
+    );
     return value;
   }
 
@@ -119,7 +132,10 @@ class _AccountService implements AccountService {
                 .compose(_dio.options, '/Auth',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = BaseResponse<Credential>.fromJson(_result.data!);
+    final value = BaseResponse<Credential>.fromJson(
+      _result.data!,
+      (json) => Credential.fromJson(json as Map<String, dynamic>),
+    );
     return value;
   }
 
@@ -135,7 +151,10 @@ class _AccountService implements AccountService {
                 .compose(_dio.options, '/FacebookAuth',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = BaseResponse<Credential>.fromJson(_result.data!);
+    final value = BaseResponse<Credential>.fromJson(
+      _result.data!,
+      (json) => Credential.fromJson(json as Map<String, dynamic>),
+    );
     return value;
   }
 
@@ -151,7 +170,10 @@ class _AccountService implements AccountService {
                 .compose(_dio.options, '/AppleAuthentication/SignIn',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = BaseResponse<Credential>.fromJson(_result.data!);
+    final value = BaseResponse<Credential>.fromJson(
+      _result.data!,
+      (json) => Credential.fromJson(json as Map<String, dynamic>),
+    );
     return value;
   }
 
@@ -167,7 +189,10 @@ class _AccountService implements AccountService {
                 .compose(_dio.options, '/GoogleAuth',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = BaseResponse<Credential>.fromJson(_result.data!);
+    final value = BaseResponse<Credential>.fromJson(
+      _result.data!,
+      (json) => Credential.fromJson(json as Map<String, dynamic>),
+    );
     return value;
   }
 
@@ -183,7 +208,10 @@ class _AccountService implements AccountService {
                 .compose(_dio.options, '/Accounts/Register',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = BaseResponse<RegisterResponse>.fromJson(_result.data!);
+    final value = BaseResponse<RegisterResponse>.fromJson(
+      _result.data!,
+      (json) => RegisterResponse.fromJson(json as Map<String, dynamic>),
+    );
     return value;
   }
 
@@ -249,7 +277,11 @@ class _ConfigService implements ConfigService {
                 .compose(_dio.options, '/Countries',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = BaseResponse<List<Country>>.fromJson(_result.data!);
+    final value = BaseResponse<List<Country>>.fromJson(
+        _result.data!,
+        (json) => (json as List<dynamic>)
+            .map<Country>((i) => Country.fromJson(i as Map<String, dynamic>))
+            .toList());
     return value;
   }
 
@@ -264,7 +296,11 @@ class _ConfigService implements ConfigService {
                 .compose(_dio.options, '/Airline/FlightMealPlanCodes',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = BaseResponse<List<MealPlan>>.fromJson(_result.data!);
+    final value = BaseResponse<List<MealPlan>>.fromJson(
+        _result.data!,
+        (json) => (json as List<dynamic>)
+            .map<MealPlan>((i) => MealPlan.fromJson(i as Map<String, dynamic>))
+            .toList());
     return value;
   }
 
@@ -279,7 +315,11 @@ class _ConfigService implements ConfigService {
                 .compose(_dio.options, '/CommonLanguagues/GetAllLanguagues',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = BaseResponse<List<Language>>.fromJson(_result.data!);
+    final value = BaseResponse<List<Language>>.fromJson(
+        _result.data!,
+        (json) => (json as List<dynamic>)
+            .map<Language>((i) => Language.fromJson(i as Map<String, dynamic>))
+            .toList());
     return value;
   }
 
@@ -294,7 +334,11 @@ class _ConfigService implements ConfigService {
                 .compose(_dio.options, '/Currencies',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = BaseResponse<List<Currency>>.fromJson(_result.data!);
+    final value = BaseResponse<List<Currency>>.fromJson(
+        _result.data!,
+        (json) => (json as List<dynamic>)
+            .map<Currency>((i) => Currency.fromJson(i as Map<String, dynamic>))
+            .toList());
     return value;
   }
 
@@ -309,7 +353,12 @@ class _ConfigService implements ConfigService {
                 .compose(_dio.options, '/GetAllCountryPhoneCode',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = BaseResponse<List<PhoneCode>>.fromJson(_result.data!);
+    final value = BaseResponse<List<PhoneCode>>.fromJson(
+        _result.data!,
+        (json) => (json as List<dynamic>)
+            .map<PhoneCode>(
+                (i) => PhoneCode.fromJson(i as Map<String, dynamic>))
+            .toList());
     return value;
   }
 
@@ -324,7 +373,12 @@ class _ConfigService implements ConfigService {
                 .compose(_dio.options, '/Airport/FlightPartGetAllCountries',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = BaseResponse<List<FlightPart>>.fromJson(_result.data!);
+    final value = BaseResponse<List<FlightPart>>.fromJson(
+        _result.data!,
+        (json) => (json as List<dynamic>)
+            .map<FlightPart>(
+                (i) => FlightPart.fromJson(i as Map<String, dynamic>))
+            .toList());
     return value;
   }
 
@@ -339,7 +393,12 @@ class _ConfigService implements ConfigService {
                 .compose(_dio.options, '/Airline/FlightAirlineMemberClubs',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = BaseResponse<List<AirlineMember>>.fromJson(_result.data!);
+    final value = BaseResponse<List<AirlineMember>>.fromJson(
+        _result.data!,
+        (json) => (json as List<dynamic>)
+            .map<AirlineMember>(
+                (i) => AirlineMember.fromJson(i as Map<String, dynamic>))
+            .toList());
     return value;
   }
 
@@ -354,7 +413,11 @@ class _ConfigService implements ConfigService {
                 .compose(_dio.options, '/location/search',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = BaseResponse<List<Location>>.fromJson(_result.data!);
+    final value = BaseResponse<List<Location>>.fromJson(
+        _result.data!,
+        (json) => (json as List<dynamic>)
+            .map<Location>((i) => Location.fromJson(i as Map<String, dynamic>))
+            .toList());
     return value;
   }
 
@@ -369,7 +432,11 @@ class _ConfigService implements ConfigService {
                 .compose(_dio.options, '/Cities/CountryCode/$countryCode',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = BaseResponse<List<City>>.fromJson(_result.data!);
+    final value = BaseResponse<List<City>>.fromJson(
+        _result.data!,
+        (json) => (json as List<dynamic>)
+            .map<City>((i) => City.fromJson(i as Map<String, dynamic>))
+            .toList());
     return value;
   }
 
@@ -384,7 +451,11 @@ class _ConfigService implements ConfigService {
                 .compose(_dio.options, '/ZoneDistricts/CityCode/$cityCode',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = BaseResponse<List<District>>.fromJson(_result.data!);
+    final value = BaseResponse<List<District>>.fromJson(
+        _result.data!,
+        (json) => (json as List<dynamic>)
+            .map<District>((i) => District.fromJson(i as Map<String, dynamic>))
+            .toList());
     return value;
   }
 
@@ -400,7 +471,11 @@ class _ConfigService implements ConfigService {
                     _dio.options, '/Airport/SearchAirportByKeyword/$keyword',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = BaseResponse<List<Airport>>.fromJson(_result.data!);
+    final value = BaseResponse<List<Airport>>.fromJson(
+        _result.data!,
+        (json) => (json as List<dynamic>)
+            .map<Airport>((i) => Airport.fromJson(i as Map<String, dynamic>))
+            .toList());
     return value;
   }
 
@@ -416,22 +491,12 @@ class _ConfigService implements ConfigService {
                     '/Airport/SearchFlightDestinationByKeyword/$keyword',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = BaseResponse<List<FlightAirport>>.fromJson(_result.data!);
-    return value;
-  }
-
-  @override
-  Future<BaseResponse<List<Resource>>> getResources(language, types) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _data = types;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<BaseResponse<List<Resource>>>(
-            Options(method: 'POST', headers: <String, dynamic>{}, extra: _extra)
-                .compose(_dio.options, '/CommonResources/$language',
-                    queryParameters: queryParameters, data: _data)
-                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = BaseResponse<List<Resource>>.fromJson(_result.data!);
+    final value = BaseResponse<List<FlightAirport>>.fromJson(
+        _result.data!,
+        (json) => (json as List<dynamic>)
+            .map<FlightAirport>(
+                (i) => FlightAirport.fromJson(i as Map<String, dynamic>))
+            .toList());
     return value;
   }
 
@@ -447,7 +512,54 @@ class _ConfigService implements ConfigService {
                     '/Currencies/GetCurrencyExchangeRate/$base/$exchange',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = BaseResponse<List<Rate>>.fromJson(_result.data!);
+    final value = BaseResponse<List<Rate>>.fromJson(
+        _result.data!,
+        (json) => (json as List<dynamic>)
+            .map<Rate>((i) => Rate.fromJson(i as Map<String, dynamic>))
+            .toList());
+    return value;
+  }
+
+  @override
+  Future<BaseResponse<List<Resource>>> getResources(language, types) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = types;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<BaseResponse<List<Resource>>>(
+            Options(method: 'POST', headers: <String, dynamic>{}, extra: _extra)
+                .compose(_dio.options, '/CommonResources/$language',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = BaseResponse<List<Resource>>.fromJson(
+        _result.data!,
+        (json) => (json as List<dynamic>)
+            .map<Resource>((i) => Resource.fromJson(i as Map<String, dynamic>))
+            .toList());
+    return value;
+  }
+
+  @override
+  Future<BaseResponse<String>> getResourceValue(language, resourceKey) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = resourceKey;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<BaseResponse<String>>(Options(
+                method: 'POST',
+                headers: <String, dynamic>{
+                  r'Content-Type': 'application/json',
+                  r'cache-control': 'max-age=172800, max-stale=172800'
+                },
+                extra: _extra,
+                contentType: 'application/x-www-form-urlencoded')
+            .compose(_dio.options, '/CommonResources/ResourceValue/$language',
+                queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = BaseResponse<String>.fromJson(
+      _result.data!,
+      (json) => json as String,
+    );
     return value;
   }
 

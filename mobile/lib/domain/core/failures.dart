@@ -19,3 +19,8 @@ abstract class ValueFailure<T> with _$ValueFailure<T> {
       ShortPassword<T>;
   const factory ValueFailure.other({required T failedValue}) = Other<T>;
 }
+
+@freezed
+abstract class LanguageFailure with _$LanguageFailure {
+  const factory LanguageFailure.notFound() = LanguageFailureNotFound;
+}

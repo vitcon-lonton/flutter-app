@@ -15,6 +15,7 @@ const getFlightPartsUrl = '/Airport/FlightPartGetAllCountries';
 const getCurrencyRateUrl = '/Currencies/GetCurrencyExchangeRate';
 const getAirlineMembersUrl = '/Airline/FlightAirlineMemberClubs';
 const getFlightAirportsUrl = '/Airport/SearchFlightDestinationByKeyword';
+const cache = CacheControl(maxAge: 172800, maxStale: 172800);
 
 @RestApi(baseUrl: 'https://apidemo.aqbooking.com/api/v1.0/ConfigurationAPI/')
 abstract class ConfigService {
@@ -64,11 +65,18 @@ abstract class ConfigService {
   Future<BaseResponse<List<FlightAirport>>> getFlightAirports(
       @Path() String keyword);
 
+  @GET('$getCurrencyRateUrl/{base}/{exchange}')
+  Future<BaseResponse<List<Rate>>> getExchangeRate(
+      @Path() String base, @Path() String exchange);
+
   @POST('$getResourcesUrl/{language}')
   Future<BaseResponse<List<Resource>>> getResources(
       @Path() int language, @Body() List<String> types);
 
-  @GET('$getCurrencyRateUrl/{base}/{exchange}')
-  Future<BaseResponse<List<Rate>>> getExchangeRate(
-      @Path() String base, @Path() String exchange);
+  @cache
+  @FormUrlEncoded()
+  @Headers({'Content-Type': 'application/json'})
+  @POST('$getResourcesUrl/ResourceValue/{language}')
+  Future<BaseResponse<String>> getResourceValue(
+      @Path() int language, @Body() String resourceKey);
 }

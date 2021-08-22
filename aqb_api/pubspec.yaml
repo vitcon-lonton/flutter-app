@@ -15,6 +15,7 @@ dependencies:
   retrofit: any
   json_annotation: ^4.1.0
   freezed_annotation: ^0.14.3
+  postman_dio: 1.0.2
 
 dev_dependencies:
   flutter_test:

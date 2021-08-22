@@ -773,11 +773,14 @@ Map<String, dynamic> _$$_PassengerInfoToJson(_$_PassengerInfo instance) =>
       'seatNumberRequests': instance.seatNumberRequests,
     };
 
-BaseResponse<T> _$BaseResponseFromJson<T>(Map<String, dynamic> json) =>
+BaseResponse<T> _$BaseResponseFromJson<T>(
+  Map<String, dynamic> json,
+  T Function(Object? json) fromJsonT,
+) =>
     BaseResponse<T>(
       statusCode: json['statusCode'] as int?,
       message: json['message'],
-      responseData: BaseResponse._dataFromJson(json['responseData']),
+      responseData: _$nullableGenericFromJson(json['responseData'], fromJsonT),
       responseHeader: json['responseHeader'] as List<dynamic>?,
       fullResponseString: json['fullResponseString'] as String?,
       fullMsg: json['fullMsg'] as String?,
@@ -785,3 +788,9 @@ BaseResponse<T> _$BaseResponseFromJson<T>(Map<String, dynamic> json) =>
       aqStatusCode: json['aqStatusCode'] as String?,
       resourceKey: json['resourceKey'] as String?,
     );
+
+T? _$nullableGenericFromJson<T>(
+  Object? input,
+  T Function(Object? json) fromJson,
+) =>
+    input == null ? null : fromJson(input);
