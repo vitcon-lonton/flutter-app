@@ -3,13 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:aqb_api/aqb_api.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:package_info/package_info.dart';
 
+import 'env_config.dart';
 import 'infra/language_repo.dart';
 
 final dio = Dio()
   ..options = BaseOptions(
       connectTimeout: 10000, sendTimeout: 10000, receiveTimeout: 10000);
-final client = ConfigService(dio);
+final client = ConfigService(dio, baseUrl: EnvConfig.DOMAIN);
 final storage = FlutterSecureStorage();
 final service = ConfigService(dio);
 final repo = LanguageRepo(service, storage);
@@ -28,6 +30,7 @@ Future<void> main() async {
   // }));
 
   // repo.init();
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 
@@ -56,22 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance!.addPostFrameCallback((_) async {
-      await repo.init();
-      // final value = await _fromLocal();
-      // print(value);
-    });
-
-    // repo.init();
-
-    // client.getAbout().then((value) {
-    //   print(value);
-    //   return null;
-    // });
-    // client.getCountries().then((value) {
-    //   print(value.responseData!.length);
-    //   return null;
-    // });
+    WidgetsBinding.instance!.addPostFrameCallback((_) async {});
   }
 
   int _counter = 0;
@@ -85,18 +73,14 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      appBar: AppBar(title: Text(widget.title)),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            EnvInfo(),
             Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
+            Text('$_counter', style: Theme.of(context).textTheme.headline4),
           ],
         ),
       ),
@@ -105,6 +89,57 @@ class _MyHomePageState extends State<MyHomePage> {
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ),
+    );
+  }
+}
+
+class EnvInfo extends StatelessWidget {
+  const EnvInfo({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          'DOMAIN: ${EnvConfig.DOMAIN}',
+          style: Theme.of(context).textTheme.headline5,
+        ),
+        Text(
+          'APP_MODE: ${EnvConfig.APP_MODE}',
+          style: Theme.of(context).textTheme.headline5,
+        ),
+        Text(
+          'APP_NAME: ${EnvConfig.APP_NAME}',
+          style: Theme.of(context).textTheme.headline5,
+        ),
+        Text(
+          'APP_SUFFIX: ${EnvConfig.APP_SUFFIX}',
+          style: Theme.of(context).textTheme.headline5,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                'Package Name',
+                style: Theme.of(context).textTheme.headline5,
+              ),
+              FutureBuilder<PackageInfo>(
+                future: PackageInfo.fromPlatform(),
+                builder: (context, value) {
+                  if (!value.hasData) return Container();
+
+                  return Text(
+                    value.data!.packageName,
+                    style: Theme.of(context).textTheme.headline6,
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

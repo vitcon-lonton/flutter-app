@@ -1,0 +1,16 @@
+//
+//  Default.xcconfig
+//  Runner
+//
+//  Created by vit con lon ton on 27/08/2021.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+#include "Generated.xcconfig"
+#include "Defineexample-defaults.xcconfig"
+#include "Defineexample.xcconfig"
+
+APP_SUFFIX=
+APP_MODE=development
+APP_NAME=AQBooking.com

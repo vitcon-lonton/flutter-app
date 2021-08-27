@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!--    <string name="app_name">AQBooking.com</string>  -->
+    <string name="facebook_app_id">659249811560723</string>
+    <string name="fb_login_protocol_scheme">fb659249811560723</string>
+    <string name="map_key" tools:ignore="Typos">AIzaSyC9yG9xs9pC2xYocpXbWkKkD1J9mJxHzjM</string>
+</resources>
