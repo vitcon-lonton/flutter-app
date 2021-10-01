@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+
 enum Mode { dev, stag, prod }
 
 class EnvConfig {
@@ -16,5 +18,10 @@ class EnvConfig {
     if (mode == Mode.stag) return 'https://apidemo.aqbooking.com/api/v1.0/';
     if (mode == Mode.prod) return 'https://api.aqbooking.com/api/v1.0/';
     return 'http://103.97.125.19:100/api/v1.0/';
+  }
+
+  static BaseOptions get options {
+    return BaseOptions(
+        connectTimeout: 10000, sendTimeout: 10000, receiveTimeout: 10000);
   }
 }

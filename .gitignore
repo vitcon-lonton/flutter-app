@@ -1,3 +1,5 @@
-pubspec.lock
 .metadata
 Podfile.lock
+pubspec.lock
+*.g.dart
+*.freezed.dart

@@ -1,125 +1,87 @@
-import 'dart:convert';
-import 'dart:developer';
+import 'package:aqb_api/aqb_api.dart' as data;
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart';
+part 'resource.g.dart';
 
-import 'package:aqb_api/aqb_api.dart';
-import 'package:dartz/dartz.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:kt_dart/kt.dart';
+var store = {};
+var version = 0.0;
+var languageId = 1;
+const key = 'resource';
+const key2 = 'resource';
 
-import 'failures.dart';
+@HiveType(typeId: 0)
+class ResourceModel extends HiveObject implements data.Resource {
+  @override
+  @HiveField(0)
+  final String? resourceKey;
 
-mixin ILanguageManager {
-  Future<Either<LanguageFailure, Language>> getLanguage();
+  @override
+  @HiveField(1)
+  final String? resourceValue;
 
-  Future<Either<LanguageFailure, KtList<Language>>> getLanguages();
+  @override
+  @HiveField(2)
+  final int? languageFid;
 
-  Future<Either<LanguageFailure, Unit>> update(Language language);
+  ResourceModel({
+    this.languageFid,
+    this.resourceKey,
+    this.resourceValue,
+  });
+
+  @override
+  data.$ResourceCopyWith<data.Resource> get copyWith =>
+      throw UnimplementedError();
+
+  @override
+  Map<String, dynamic> toJson() {
+    throw UnimplementedError();
+  }
+
+  @override
+  String? get typeOfResource => throw UnimplementedError();
 }
 
-class LanguageManager implements ILanguageManager {
-  static const key = 'setting_language';
-  static const key2 = 'setting_languages';
-  final ConfigService service;
-  final FlutterSecureStorage storage;
-  final dfLanguage =
-      Language().copyWith(id: 1).copyWith(displayName: 'Thailand');
+class ResourceManager {
+  final data.ConfigService service;
+  late final Box<ResourceModel> box;
 
-  LanguageManager(this.service, this.storage);
-
-  @override
-  Future<Either<LanguageFailure, Language>> getLanguage() async {
-    try {
-      final language = await _fromLocal();
-      return Right(language!);
-    } catch (e) {
-      log('getLanguage');
-      return const Left(LanguageFailure.notFound());
-    }
-  }
-
-  @override
-  Future<Either<LanguageFailure, KtList<Language>>> getLanguages() async {
-    try {
-      final res = await service.getLanguages();
-      if (!res.valid) return const Left(LanguageFailure.notFound());
-      return Right(KtList.from(res.responseData!.map((e) => e)));
-    } catch (e) {
-      log('getLanguages');
-      return const Left(LanguageFailure.notFound());
-    }
-  }
+  ResourceManager(this.service);
 
   init() async {
-    // try {
-    var _language = await _fromLocal();
-    if (_language != null) return;
-    // _language = (await getLanguages()).foldRight(null, (r, previous) {
-    //   print(r);
-    //   return r.first();
-    // });
-
-    _language = (await getLanguages()).fold((l) => null, (r) {
-      return r.first();
-    });
-
-    // print(_language);
-
-    if (_language == null) return;
-    await _updateLocal(_language);
-    return;
-    // } catch (e) {
-    //   log(e.toString());
-    // }
+    final appDocumentDirectory = await getApplicationDocumentsDirectory();
+    // await Hive.initFlutter();
+    Hive.init(appDocumentDirectory.path);
+    Hive.registerAdapter(ResourceModelAdapter());
+    box = await Hive.openBox('resources');
   }
 
-  // Future<void> _updateLanguages(KtList<Language> languages) async {
-  //   final string = jsonEncode(languages.map((p0) => p0.toJson()));
-  //   return storage.write(key: key2, value: string);
-  // }
+  bool shouldSync() => true;
 
-  // Future<KtList<Language>> _readLanguages(KtList<Language> languages) async {
-  //   final string = await storage.read(key: key2);
-  //   return KtList.from(
-  //       (jsonDecode(string!) as Iterable).map((e) => Language.fromJson(e)));
-  // }
-
-  @override
-  Future<Either<LanguageFailure, Unit>> update(Language language) async {
-    try {
-      await _updateLocal(language);
-      return const Right(unit);
-    } catch (e) {
-      log('update');
-      return const Left(LanguageFailure.notFound());
-    }
-  }
-
-  Future<Language?> _fromLocal() async {
-    final string = await storage.read(key: key);
-    if (string == null) return null;
-    return Language.fromJson(jsonDecode(string));
-  }
-
-  Future<void> _updateLocal(Language language) async {
-    final string = jsonEncode(language.toJson());
-    return storage.write(key: key, value: string);
+  Future syncResource(String resourceKey) async {
+    final res = await service.getResourceValue(languageId, resourceKey);
+    if (!res.valid) return;
+    final resource = ResourceModel()
+        .copyWith(languageFid: languageId)
+        .copyWith(resourceKey: resourceKey)
+        .copyWith(resourceValue: res.responseData) as ResourceModel;
+    box.add(resource);
   }
 }
 
+// class ResourceDAO {
+//   final Map<String?, String?> store;
 
-  // @override
-  // Future<Either<LanguageFailure, KtList<Resource>>> getLanguage() {
-  //   // TODO: implement getLanguage
-  //   throw UnimplementedError();
-  // }
-  // // final SearchRepository repository;
+//   ResourceDAO(this.store);
 
-  // // SearchByTextImpl(this.repository);
+//   write(data.Resource item) {
+//     final key = item.resourceKey;
+//     final value = item.resourceValue;
+//     store.update(key, (v) => value);
+//   }
 
-  // // @override
-  // // Future<Either<Failure, List<Result>>> call(String? textSearch) async {
-  // //   if (textSearch?.isEmpty ?? true) {
-  // //     return Left(InvalidSearchText());
-  // //   }
-  // //   return repository.getUsers(textSearch!);
-  // // }
+//   read(String key) {
+//     if (!store.containsKey(key)) return null;
+//     return store[key];
+//   }
+// }

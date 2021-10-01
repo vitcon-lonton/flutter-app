@@ -9,6 +9,8 @@ void main() {
       sendTimeout: 10000, connectTimeout: 10000, receiveTimeout: 10000);
   final dio = Dio(options);
   final client = ConfigService(dio);
+  final authClient = AuthService(dio);
+  // ignore: unused_local_variable
   final accountClient = AccountService(dio);
   dio.interceptors.add(PostmanDioLogger(enablePrint: true));
 
@@ -17,7 +19,7 @@ void main() {
       final data = const EmailAuthData()
           .copyWith(password: '123123123')
           .copyWith(email: 'hoanghiep97@hotmail.com');
-      final res = await accountClient.emailAuth(data);
+      final res = await authClient.emailAuth(data);
       // final account = res.responseData;
       // final userId = account!.userId;
 

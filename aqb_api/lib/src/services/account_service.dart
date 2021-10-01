@@ -16,16 +16,8 @@ abstract class PaymentService {
 }
 
 @RestApi(baseUrl: 'https://apidemo.aqbooking.com/api/v1.0/IdentityUserAPI/')
-abstract class AccountService {
-  factory AccountService(Dio dio, {String baseUrl}) = _AccountService;
-
-  @GET('/Reward/{userId}')
-  @Headers(authHeader)
-  Future<BaseResponse<Reward>> getReward(String userId);
-
-  @GET('/HelpType/GetByLangId/{language}')
-  @Headers(authHeader)
-  Future<BaseResponse<List<Help>>> getHelpsSupport(@Path() int language);
+abstract class AuthService {
+  factory AuthService(Dio dio, {String baseUrl}) = _AuthService;
 
   @POST('/RequestTokenAuth')
   @Headers(authHeader)
@@ -45,4 +37,53 @@ abstract class AccountService {
 
   @POST('/Accounts/Register')
   Future<BaseResponse<RegisterResponse>> register(@Body() RegisterData data);
+}
+
+@RestApi(baseUrl: 'https://apidemo.aqbooking.com/api/v1.0/IdentityUserAPI/')
+abstract class AdminService {
+  factory AdminService(Dio dio, {String baseUrl}) = _AdminService;
+
+  @GET('/Accounts')
+  @Headers(authHeader)
+  Future<BaseResponse<Credential>> accounts();
+
+  @GET('/Accounts/{key}')
+  @Headers(authHeader)
+  Future<BaseResponse<Credential>> account(@Path() String key);
+
+  @DELETE('/Accounts/{key}')
+  @Headers(authHeader)
+  Future<BaseResponse<Credential>> deleteAccount(@Path() String key);
+}
+
+@RestApi(baseUrl: 'https://apidemo.aqbooking.com/api/v1.0/IdentityUserAPI/')
+abstract class AccountService {
+  factory AccountService(Dio dio, {String baseUrl}) = _AccountService;
+
+  @GET('/Reward/{userId}')
+  @Headers(authHeader)
+  Future<BaseResponse<Reward>> getReward(@Path() String userId);
+
+  @GET('/HelpType/GetByLangId/{language}')
+  @Headers(authHeader)
+  Future<BaseResponse<List<Help>>> getHelpsSupport(@Path() int language);
+
+  // @POST('/RequestTokenAuth')
+  // @Headers(authHeader)
+  // Future<BaseResponse<String>> getAccessToken(String refreshToken);
+
+  // @POST('/Auth')
+  // Future<BaseResponse<Credential>> emailAuth(@Body() EmailAuthData data);
+
+  // @POST('/FacebookAuth')
+  // Future<BaseResponse<Credential>> facebookAuth(@Body() FBAuthData data);
+
+  // @POST('/AppleAuthentication/SignIn')
+  // Future<BaseResponse<Credential>> appleAuth(@Body() AppleAuthData data);
+
+  // @POST('/GoogleAuth')
+  // Future<BaseResponse<Credential>> googleAuth(@Body() GoogleAuthData data);
+
+  // @POST('/Accounts/Register')
+  // Future<BaseResponse<RegisterResponse>> register(@Body() RegisterData data);
 }
