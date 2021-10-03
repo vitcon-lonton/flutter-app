@@ -1,13 +1,10 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-
-import 'handle.dart';
-
-late Resource resource = Resource();
+import 'resource/resource.dart';
 
 Future<void> main() async {
+  await Resource().init();
   runApp(const MyApp());
 }
 
@@ -22,57 +19,30 @@ class _MyAppState extends State<MyApp> {
   bool initiated = false;
 
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((_) async {
-      await resource.init();
-      setState(() {
-        initiated = true;
-      });
-      resource.sync();
-
-      // box.watch().listen((event) {
-      //   // ignore: avoid_print
-      //   print('\n${event.key.toString()}');
-      //   // ignore: avoid_print
-      //   print('\n${event.value.toString()}');
-      // });
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(),
         body: Column(
           children: [
-            if (initiated) WText(testKey[8]),
-            // WText(testKey[8]),
-            // WText(testKey[3]),
+            // for (var item in testKey) WText(item),
+            WText(testKey[1]),
+            WText(testKey[2]),
+            WText(testKey[8]),
+            WText(testKey[4]),
+            WText(testKey[0]),
+            WText(testKey[7]),
+            WText(testKey[3]),
+            ElevatedButton(
+              child: const Text('data'),
+              onPressed: () {
+                setState(() => initiated = true);
+              },
+            ),
+            if (initiated) WText(testKey[3]),
           ],
         ),
       ),
-    );
-  }
-}
-
-class WText extends StatelessWidget {
-  final String data;
-
-  const WText(this.data, {Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final box = Resource().box;
-
-    return ValueListenableBuilder(
-      valueListenable: box.listenable(keys: [data]),
-      builder: (_, __, widget) {
-        print('build');
-        if (!box.isOpen) return Text(data);
-        return Text(Resource().manager.getResource(data) ?? data);
-      },
     );
   }
 }
