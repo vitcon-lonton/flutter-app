@@ -3,6 +3,7 @@ part of 'resource.dart';
 class ResourceServiceProxy implements IResourceService {
   final IResourceService service;
   final ISynchronizer synchronizer;
+  final List<String> _syncing = [];
 
   ResourceServiceProxy(this.service, this.synchronizer);
 
@@ -12,13 +13,13 @@ class ResourceServiceProxy implements IResourceService {
   @override
   void languageChange(int value) {
     service.languageChange(value);
-    synchronizer.languageChanged(value);
+    // synchronizer.setLanguage(value);
   }
 
   @override
   String? getResource(String key) {
     final res = service.getResource(key);
-    if (res == null) _syncs(key);
+    if (res == null) _requestSync(key);
     return res;
   }
 
@@ -27,8 +28,13 @@ class ResourceServiceProxy implements IResourceService {
     return service.listenable(keys: keys);
   }
 
-  _syncs(String key) async {
-    if (synchronizer.onSync(key)) return Future.value(null);
-    await synchronizer.syncResource(key);
+  _requestSync(String key) async {
+    if (_syncing.contains(key)) return;
+    _syncing.add(key);
+    try {
+      await synchronizer.syncResource(key);
+    } catch (e) {
+      _syncing.remove(key);
+    }
   }
 }

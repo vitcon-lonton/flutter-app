@@ -1,7 +1,7 @@
 part of 'resource.dart';
 
 @freezed
-abstract class ResourceEntity with _$ResourceEntity {
+class ResourceEntity with _$ResourceEntity {
   @HiveType(typeId: 0, adapterName: 'ResourceEntityAdapter')
   const factory ResourceEntity({
     @HiveField(2) final int? languageFid,

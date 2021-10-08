@@ -1,6 +1,5 @@
 // ignore_for_file: avoid_print
 
-import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:aqb_api/aqb_api.dart' as data hide Resource;
@@ -23,9 +22,9 @@ part 'resource_service_proxy.dart';
 part 'widget.dart';
 
 class Resource {
-  late final Box<ResourceEntity> _box;
   late final IResourceService _service;
   late final ISynchronizer _synchronizer;
+  late final Box<ResourceEntity> _resourceBox;
 
   Resource._();
 
@@ -34,9 +33,10 @@ class Resource {
   static final _instance = Resource._();
 
   init() async {
-    _box = await Hive.openBox<ResourceEntity>(key, bytes: Uint8List(0));
-    _synchronizer = Synchronizer(_box, data.ConfigService(Dio()));
-    _service = ResourceServiceProxy(ResourceService(_box), _synchronizer);
+    _resourceBox = await Hive.openBox<ResourceEntity>(key, bytes: Uint8List(0));
+    _synchronizer = Synchronizer(data.ConfigService(Dio()), _resourceBox);
+    final realService = ResourceService(_resourceBox);
+    _service = ResourceServiceProxy(realService, _synchronizer);
     _service.languageChange(1);
   }
 
