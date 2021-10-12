@@ -4,11 +4,10 @@ import 'dart:async';
 
 import 'package:aqb_api/aqb_api.dart';
 import 'package:collection/src/iterable_extensions.dart';
-import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:rxdart/subjects.dart';
 
+import 'ilanguage_service.dart';
 import 'language.dart';
 import 'model.dart';
 
@@ -16,24 +15,8 @@ class LanguageService implements ILanguageService {
   final selectedIndex = 0;
   final Box<int> selectedLanguageBox;
   final Box<HiveLanguage> languageBox;
-  final languageController = BehaviorSubject<List<Language>>();
 
-  LanguageService(this.selectedLanguageBox, this.languageBox) {
-    languageBox.listenable().addListener(() {
-      languageController.add(languageBox.values.map((e) {
-        return e.toData();
-      }).toList());
-    });
-
-    // languageBox.watch().map((event) {
-    //   languageController.add(languageBox.values.map((e) {
-    //     return e.toData();
-    //   }).toList());
-    // });
-    languageController.add(languageBox.values.map((e) {
-      return e.toData();
-    }).toList());
-  }
+  LanguageService(this.selectedLanguageBox, this.languageBox);
 
   @override
   Language? get language {
@@ -49,29 +32,22 @@ class LanguageService implements ILanguageService {
   }
 
   @override
-  Stream<List<Language>> watchAll() {
-    // languageController.add(languageBox.values.map((e) => e.toData()).toList());
-
-    // return languageBox.watch().map((event) {
-    //   return languageBox.values.map((e) => e.toData()).toList();
-    // });
-    return languageController.stream;
-    // return Stream.value(languageBox.values.map((e) => e.toData()).toList())
-    //     .asBroadcastStream();
-  }
-
-  @override
-  Stream<Language?> watchSelected() {
-    return selectedLanguageBox.watch().skipWhile((event) {
-      return event.value == selectedLanguageBox.getAt(selectedIndex);
-    }).map((event) => language);
-  }
-
-  @override
-  Future<List<Language>?> get languages {
-    return Future.value(languageBox.values.map((e) {
+  List<Language>? get languages {
+    return languageBox.values.map((e) {
       return Language.fromJson(e.toJson());
-    }).toList());
+    }).toList();
+  }
+
+  @override
+  Stream<List<Language>> watch() {
+    return languageBox.watch().map((event) {
+      return languageBox.values.map((e) => e.toData()).toList();
+    });
+  }
+
+  @override
+  Stream<Language?> watchSelected() async* {
+    yield* selectedLanguageBox.watch().map((event) => language);
   }
 
   @override
@@ -82,14 +58,20 @@ class LanguageService implements ILanguageService {
 
     return selectedLanguageBox.putAt(selectedIndex, language.id!);
   }
-
-  @override
-  ValueListenable<Box<int>> languageListenable() {
-    return selectedLanguageBox.listenable();
-  }
-
-  @override
-  ValueListenable<Box<HiveLanguage>> listenable({List<int>? ids}) {
-    return languageBox.listenable(keys: ids);
-  }
 }
+
+
+
+// @override
+// Future<List<Language>?> get languages {
+//   return Future.value(languageBox.values.map((e) {
+//     return Language.fromJson(e.toJson());
+//   }).toList());
+// }
+
+// yield* selectedLanguageBox.watch().skipWhile((event) {
+//   return event.value == selectedLanguageBox.getAt(selectedIndex);
+// }).map((event) => language);
+// return selectedLanguageBox.watch().skipWhile((event) {
+//   return event.value == selectedLanguageBox.getAt(selectedIndex);
+// }).map((event) => language);

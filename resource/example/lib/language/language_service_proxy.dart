@@ -1,8 +1,8 @@
 import 'package:aqb_api/aqb_api.dart';
-import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'ilanguage_service.dart';
 import 'language.dart';
 import 'model.dart';
 
@@ -17,32 +17,24 @@ class LanguageServiceProxy implements ILanguageService {
   Language? get language => service.language;
 
   @override
-  Stream<List<Language>> watchAll() => service.watchAll();
+  List<Language>? get languages {
+    final cached = service.languages;
+
+    if (cached?.isEmpty ?? true) _syncToLocal();
+
+    return cached;
+  }
+
+  @override
+  Stream<List<Language>> watch() => service.watch();
 
   @override
   Stream<Language?> watchSelected() => service.watchSelected();
 
   @override
-  Future<List<Language>?> get languages async {
-    final cached = await service.languages;
-    if (cached?.isEmpty ?? true) return _sync();
-    return cached;
-  }
-
-  @override
   Future<void> update(Language value) => service.update(value);
 
-  @override
-  ValueListenable<Box<int>> languageListenable() {
-    return service.languageListenable();
-  }
-
-  @override
-  ValueListenable<Box<HiveLanguage>> listenable({List<int>? ids}) {
-    return service.listenable(ids: ids);
-  }
-
-  Future<List<Language>?> _sync() async {
+  Future<List<Language>?> _syncToLocal() async {
     final response = await api.getLanguages();
     final languages = response.responseData;
     final entries = <int?, HiveLanguage>{};
