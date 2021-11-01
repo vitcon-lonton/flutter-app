@@ -1,13 +1,13 @@
 part of 'resource.dart';
 
 mixin IResourceService {
-  int get language;
-
   void languageChange(int value);
 
-  String? getValue(String key);
+  Resource? getValue(String key);
 
-  List<String?>? getValues({List<String>? keys});
+  List<Resource?> getValues({List<String>? keys});
 
-  Stream<List<ResourceHive>?> watch({List<String>? keys});
+  Stream<List<Resource>?> watch({List<String>? keys});
+
+  Future clear();
 }

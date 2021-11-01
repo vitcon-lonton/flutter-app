@@ -1,38 +1,39 @@
 part of 'resource.dart';
 
 class ResourceService implements IResourceService {
-  ResourceService(this.box);
+  ResourceService(this.box) {
+    language = 1;
+  }
 
-  late int _language = 1;
-  final Box<ResourceHive> box;
+  @protected
+  late int language;
 
-  @override
-  int get language => _language;
-
-  @override
-  void languageChange(int value) => _language = value;
-
-  @override
-  String? getValue(String key) => box.get(key)?.resourceValue;
+  @protected
+  final Box<Resource> box;
 
   @override
-  List<String?>? getValues({List<String>? keys}) {
-    if (keys?.isEmpty ?? true) {
-      return box.values.map((item) => item.resourceValue).toList();
-    }
+  Future<void> clear() => box.clear();
+
+  @override
+  void languageChange(int value) => language = value;
+
+  @override
+  Resource? getValue(String key) => box.get(key);
+
+  @override
+  List<Resource?> getValues({List<String>? keys}) {
+    if (keys?.isEmpty ?? true) return box.values.toList();
 
     return box.values.where((item) {
       return keys!.contains(item.resourceKey);
-    }).map((item) {
-      return item.resourceValue;
     }).toList();
   }
 
   @override
-  Stream<List<ResourceHive>?> watch({List<String>? keys}) {
-    if (keys == null) {
+  Stream<List<Resource>?> watch({List<String>? keys}) {
+    if (keys != null) {
       return box.watch().where((event) {
-        return keys!.contains(event.key);
+        return keys.contains(event.key);
       }).map((event) => box.values.toList());
     }
 

@@ -1,15 +1,18 @@
 part of 'resource.dart';
 
 @freezed
-class ResourceHive with _$ResourceHive {
-  @HiveType(typeId: 0, adapterName: 'ResourceHiveAdapter')
-  const factory ResourceHive({
+class Resource with _$Resource {
+  @HiveType(typeId: 0, adapterName: 'ResourceAdapter')
+  const factory Resource({
     @HiveField(2) final int? languageFid,
     @HiveField(0) final String? resourceKey,
     @HiveField(1) final String? resourceValue,
     @HiveField(3) final String? typeOfResource,
-  }) = _ResourceHive;
+    @HiveField(4) required final DateTime createTime,
+  }) = _Resource;
 
-  factory ResourceHive.fromJson(Map<String, dynamic> json) =>
-      _$ResourceHiveFromJson(json);
+  factory Resource.now() => Resource(createTime: DateTime.now());
+
+  factory Resource.fromJson(Map<String, dynamic> json) =>
+      _$ResourceFromJson(json);
 }

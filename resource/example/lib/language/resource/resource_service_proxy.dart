@@ -8,29 +8,32 @@ class ResourceServiceProxy implements IResourceService {
   ResourceServiceProxy(this.service, this.synchronizer);
 
   @override
-  int get language => service.language;
-
-  @override
   void languageChange(int value) {
     service.languageChange(value);
-    synchronizer.language == value;
-    service.getValues()?.forEach((element) {});
+    synchronizer.updateLanguageId(value);
+
+    service.getValues().forEach((element) {
+      // print(element);
+      if (element?.resourceKey == null) return;
+
+      _requestSync(element!.resourceKey!);
+    });
   }
 
   @override
-  String? getValue(String key) {
+  Resource? getValue(String key) {
     final result = service.getValue(key);
+
     if (result == null) _requestSync(key);
+
     return result;
   }
 
   @override
-  List<String?>? getValues({List<String>? keys}) {
+  List<Resource?> getValues({List<String>? keys}) {
     final result = service.getValues(keys: keys);
 
-    if (keys?.isEmpty ?? true) return result;
-
-    if (result == null || result.contains(null)) {
+    if ((keys?.isNotEmpty ?? false) && result.contains(null)) {
       for (var i = 0; i < keys!.length; i++) {
         _requestSync(key);
       }
@@ -40,7 +43,7 @@ class ResourceServiceProxy implements IResourceService {
   }
 
   @override
-  Stream<List<ResourceHive>?> watch({List<String>? keys}) {
+  Stream<List<Resource>?> watch({List<String>? keys}) {
     if (keys?.isNotEmpty ?? true) {
       for (var key in keys!) {
         getValue(key);
@@ -50,12 +53,18 @@ class ResourceServiceProxy implements IResourceService {
     return service.watch(keys: keys);
   }
 
+  @override
+  Future clear() => service.clear();
+
   _requestSync(String key) async {
     try {
       if (_syncing.contains(key)) return;
       _syncing.add(key);
-      await synchronizer.syncResource(key);
+      await synchronizer.singleSync(key);
     } catch (e) {
+      // ignore: avoid_print
+      print(e);
+    } finally {
       _syncing.remove(key);
     }
   }

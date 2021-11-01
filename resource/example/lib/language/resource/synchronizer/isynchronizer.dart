@@ -1,4 +1,5 @@
 mixin ISynchronizer {
-  late int language;
-  Future syncResource(String key);
+  Future singleSync(String key);
+
+  void updateLanguageId(int value);
 }

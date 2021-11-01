@@ -41,7 +41,9 @@ class _ResourcesListenable extends ValueListenable<List<String?>?> {
   }
 
   @override
-  List<String?>? get value => service.getValues(keys: keys);
+  List<String?>? get value {
+    return service.getValues(keys: keys).map((e) => e?.resourceValue).toList();
+  }
 
   // @override
   // String? get value => service.getValue(key);

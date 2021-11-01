@@ -2,39 +2,40 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:aqb_api/aqb_api.dart' as data hide Resource;
+import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:resource_example/language/resource/resource.dart';
 
-import 'isynchronizer.dart';
-
 class Synchronizer implements ISynchronizer {
-  Synchronizer(data.ConfigService api, Box<ResourceHive> resourceBox) {
-    _api = api;
-    _language = 1;
+  Synchronizer(this.api, this.storage) {
     language = 1;
-    _resourceBox = resourceBox;
   }
 
-  late int _language;
-  late data.ConfigService _api;
-  late Box<ResourceHive> _resourceBox;
-
-  @override
+  @protected
   late int language;
 
+  @protected
+  late Box<Resource> storage;
+
+  @protected
+  late data.ConfigService api;
+
   @override
-  Future syncResource(String key) async {
+  Future singleSync(String key) async {
     final rsEncode = jsonEncode(key);
-    final response = await _api.getResourceValue(language, rsEncode);
+    final response = await api.getResourceValue(language, rsEncode);
 
-    if (!response.valid) return;
+    if (!response.valid) throw Exception();
 
-    final resource = const ResourceHive()
+    final resource = Resource.now()
         .copyWith(resourceKey: key)
-        .copyWith(languageFid: _language)
+        .copyWith(languageFid: language)
         .copyWith(resourceValue: response.responseData);
 
-    _resourceBox.put(key, resource);
+    return storage.put(key, resource);
   }
+
+  @override
+  void updateLanguageId(int value) => language = value;
 }

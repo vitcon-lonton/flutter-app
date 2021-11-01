@@ -26,28 +26,28 @@ part 'resource_service_proxy.dart';
 part 'widget.dart';
 part 'ext.dart';
 
-class Resource {
-  late final IResourceService _service;
-  late final ISynchronizer _synchronizer;
-  late final Box<ResourceHive> _resourceBox;
+// class Resource {
+//   late final IResourceService _service;
+//   late final ISynchronizer _synchronizer;
+//   late final Box<ResourceHive> _resourceBox;
 
-  Resource._();
+//   Resource._();
 
-  factory Resource() => _instance;
+//   factory Resource() => _instance;
 
-  static final _instance = Resource._();
+//   static final _instance = Resource._();
 
-  int get language => _service.language;
+//   int get language => _service.language;
 
-  String? getValue(String key) => _service.getValue(key);
+//   String? getValue(String key) => _service.getValue(key);
 
-  void languageChange(int value) => _service.languageChange(value);
+//   void languageChange(int value) => _service.languageChange(value);
 
-  init() async {
-    _resourceBox = await Hive.openBox<ResourceHive>(key, bytes: Uint8List(0));
-    _synchronizer = Synchronizer(data.ConfigService(Dio()), _resourceBox);
-    final realService = ResourceService(_resourceBox);
-    _service = ResourceServiceProxy(realService, _synchronizer);
-    _service.languageChange(1);
-  }
-}
+//   init() async {
+//     _resourceBox = await Hive.openBox<ResourceHive>(key, bytes: Uint8List(0));
+//     _synchronizer = Synchronizer(data.ConfigService(Dio()), _resourceBox);
+//     final realService = ResourceService(_resourceBox);
+//     _service = ResourceServiceProxy(realService, _synchronizer);
+//     _service.languageChange(1);
+//   }
+// }

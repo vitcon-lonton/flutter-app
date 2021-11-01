@@ -113,7 +113,9 @@ class WText extends StatelessWidget {
     return ValueListenableBuilder<List<String?>?>(
       valueListenable: LanguagePlugin.resourceService.listenable(keys: [data]),
       builder: (_, values, widget) {
-        print('object: ${values?.first}');
+        print('object: $values');
+        if (values?.isEmpty ?? true) return Text(data);
+
         return Text(values?.first ?? data);
       },
     );
