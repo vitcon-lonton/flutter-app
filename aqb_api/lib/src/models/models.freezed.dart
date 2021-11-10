@@ -5279,20 +5279,20 @@ abstract class _Rate implements Rate {
   _$RateCopyWith<_Rate> get copyWith => throw _privateConstructorUsedError;
 }
 
-Resource _$ResourceFromJson(Map<String, dynamic> json) {
-  return _Resource.fromJson(json);
+ResourceDto _$ResourceDtoFromJson(Map<String, dynamic> json) {
+  return _ResourceDto.fromJson(json);
 }
 
 /// @nodoc
-class _$ResourceTearOff {
-  const _$ResourceTearOff();
+class _$ResourceDtoTearOff {
+  const _$ResourceDtoTearOff();
 
-  _Resource call(
+  _ResourceDto call(
       {int? languageFid,
       String? resourceKey,
       String? resourceValue,
       String? typeOfResource}) {
-    return _Resource(
+    return _ResourceDto(
       languageFid: languageFid,
       resourceKey: resourceKey,
       resourceValue: resourceValue,
@@ -5300,16 +5300,16 @@ class _$ResourceTearOff {
     );
   }
 
-  Resource fromJson(Map<String, Object> json) {
-    return Resource.fromJson(json);
+  ResourceDto fromJson(Map<String, Object> json) {
+    return ResourceDto.fromJson(json);
   }
 }
 
 /// @nodoc
-const $Resource = _$ResourceTearOff();
+const $ResourceDto = _$ResourceDtoTearOff();
 
 /// @nodoc
-mixin _$Resource {
+mixin _$ResourceDto {
   int? get languageFid => throw _privateConstructorUsedError;
   String? get resourceKey => throw _privateConstructorUsedError;
   String? get resourceValue => throw _privateConstructorUsedError;
@@ -5317,14 +5317,15 @@ mixin _$Resource {
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $ResourceCopyWith<Resource> get copyWith =>
+  $ResourceDtoCopyWith<ResourceDto> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $ResourceCopyWith<$Res> {
-  factory $ResourceCopyWith(Resource value, $Res Function(Resource) then) =
-      _$ResourceCopyWithImpl<$Res>;
+abstract class $ResourceDtoCopyWith<$Res> {
+  factory $ResourceDtoCopyWith(
+          ResourceDto value, $Res Function(ResourceDto) then) =
+      _$ResourceDtoCopyWithImpl<$Res>;
   $Res call(
       {int? languageFid,
       String? resourceKey,
@@ -5333,12 +5334,12 @@ abstract class $ResourceCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$ResourceCopyWithImpl<$Res> implements $ResourceCopyWith<$Res> {
-  _$ResourceCopyWithImpl(this._value, this._then);
+class _$ResourceDtoCopyWithImpl<$Res> implements $ResourceDtoCopyWith<$Res> {
+  _$ResourceDtoCopyWithImpl(this._value, this._then);
 
-  final Resource _value;
+  final ResourceDto _value;
   // ignore: unused_field
-  final $Res Function(Resource) _then;
+  final $Res Function(ResourceDto) _then;
 
   @override
   $Res call({
@@ -5369,9 +5370,11 @@ class _$ResourceCopyWithImpl<$Res> implements $ResourceCopyWith<$Res> {
 }
 
 /// @nodoc
-abstract class _$ResourceCopyWith<$Res> implements $ResourceCopyWith<$Res> {
-  factory _$ResourceCopyWith(_Resource value, $Res Function(_Resource) then) =
-      __$ResourceCopyWithImpl<$Res>;
+abstract class _$ResourceDtoCopyWith<$Res>
+    implements $ResourceDtoCopyWith<$Res> {
+  factory _$ResourceDtoCopyWith(
+          _ResourceDto value, $Res Function(_ResourceDto) then) =
+      __$ResourceDtoCopyWithImpl<$Res>;
   @override
   $Res call(
       {int? languageFid,
@@ -5381,13 +5384,14 @@ abstract class _$ResourceCopyWith<$Res> implements $ResourceCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$ResourceCopyWithImpl<$Res> extends _$ResourceCopyWithImpl<$Res>
-    implements _$ResourceCopyWith<$Res> {
-  __$ResourceCopyWithImpl(_Resource _value, $Res Function(_Resource) _then)
-      : super(_value, (v) => _then(v as _Resource));
+class __$ResourceDtoCopyWithImpl<$Res> extends _$ResourceDtoCopyWithImpl<$Res>
+    implements _$ResourceDtoCopyWith<$Res> {
+  __$ResourceDtoCopyWithImpl(
+      _ResourceDto _value, $Res Function(_ResourceDto) _then)
+      : super(_value, (v) => _then(v as _ResourceDto));
 
   @override
-  _Resource get _value => super._value as _Resource;
+  _ResourceDto get _value => super._value as _ResourceDto;
 
   @override
   $Res call({
@@ -5396,7 +5400,7 @@ class __$ResourceCopyWithImpl<$Res> extends _$ResourceCopyWithImpl<$Res>
     Object? resourceValue = freezed,
     Object? typeOfResource = freezed,
   }) {
-    return _then(_Resource(
+    return _then(_ResourceDto(
       languageFid: languageFid == freezed
           ? _value.languageFid
           : languageFid // ignore: cast_nullable_to_non_nullable
@@ -5419,15 +5423,15 @@ class __$ResourceCopyWithImpl<$Res> extends _$ResourceCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$_Resource implements _Resource {
-  _$_Resource(
+class _$_ResourceDto implements _ResourceDto {
+  _$_ResourceDto(
       {this.languageFid,
       this.resourceKey,
       this.resourceValue,
       this.typeOfResource});
 
-  factory _$_Resource.fromJson(Map<String, dynamic> json) =>
-      _$$_ResourceFromJson(json);
+  factory _$_ResourceDto.fromJson(Map<String, dynamic> json) =>
+      _$$_ResourceDtoFromJson(json);
 
   @override
   final int? languageFid;
@@ -5440,13 +5444,13 @@ class _$_Resource implements _Resource {
 
   @override
   String toString() {
-    return 'Resource(languageFid: $languageFid, resourceKey: $resourceKey, resourceValue: $resourceValue, typeOfResource: $typeOfResource)';
+    return 'ResourceDto(languageFid: $languageFid, resourceKey: $resourceKey, resourceValue: $resourceValue, typeOfResource: $typeOfResource)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is _Resource &&
+        (other is _ResourceDto &&
             (identical(other.languageFid, languageFid) ||
                 const DeepCollectionEquality()
                     .equals(other.languageFid, languageFid)) &&
@@ -5471,23 +5475,24 @@ class _$_Resource implements _Resource {
 
   @JsonKey(ignore: true)
   @override
-  _$ResourceCopyWith<_Resource> get copyWith =>
-      __$ResourceCopyWithImpl<_Resource>(this, _$identity);
+  _$ResourceDtoCopyWith<_ResourceDto> get copyWith =>
+      __$ResourceDtoCopyWithImpl<_ResourceDto>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_ResourceToJson(this);
+    return _$$_ResourceDtoToJson(this);
   }
 }
 
-abstract class _Resource implements Resource {
-  factory _Resource(
+abstract class _ResourceDto implements ResourceDto {
+  factory _ResourceDto(
       {int? languageFid,
       String? resourceKey,
       String? resourceValue,
-      String? typeOfResource}) = _$_Resource;
+      String? typeOfResource}) = _$_ResourceDto;
 
-  factory _Resource.fromJson(Map<String, dynamic> json) = _$_Resource.fromJson;
+  factory _ResourceDto.fromJson(Map<String, dynamic> json) =
+      _$_ResourceDto.fromJson;
 
   @override
   int? get languageFid => throw _privateConstructorUsedError;
@@ -5499,7 +5504,7 @@ abstract class _Resource implements Resource {
   String? get typeOfResource => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$ResourceCopyWith<_Resource> get copyWith =>
+  _$ResourceDtoCopyWith<_ResourceDto> get copyWith =>
       throw _privateConstructorUsedError;
 }
 

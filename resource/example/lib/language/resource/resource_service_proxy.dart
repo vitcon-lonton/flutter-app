@@ -3,7 +3,6 @@ part of 'resource.dart';
 class ResourceServiceProxy implements IResourceService {
   final IResourceService service;
   final ISynchronizer synchronizer;
-  final List<String> _syncing = [];
 
   ResourceServiceProxy(this.service, this.synchronizer);
 
@@ -12,19 +11,16 @@ class ResourceServiceProxy implements IResourceService {
     service.languageChange(value);
     synchronizer.updateLanguageId(value);
 
-    service.getValues().forEach((element) {
-      // print(element);
-      if (element?.resourceKey == null) return;
-
-      _requestSync(element!.resourceKey!);
-    });
+    _syncByKeys(
+      service.getValues().map((e) => e?.resourceKey).whereNotNull().toList(),
+    );
   }
 
   @override
   Resource? getValue(String key) {
     final result = service.getValue(key);
 
-    if (result == null) _requestSync(key);
+    if (result == null) _syncByKey(key);
 
     return result;
   }
@@ -35,7 +31,7 @@ class ResourceServiceProxy implements IResourceService {
 
     if ((keys?.isNotEmpty ?? false) && result.contains(null)) {
       for (var i = 0; i < keys!.length; i++) {
-        _requestSync(key);
+        _syncByKey(key);
       }
     }
 
@@ -56,16 +52,17 @@ class ResourceServiceProxy implements IResourceService {
   @override
   Future clear() => service.clear();
 
-  _requestSync(String key) async {
-    try {
-      if (_syncing.contains(key)) return;
-      _syncing.add(key);
-      await synchronizer.singleSync(key);
-    } catch (e) {
-      // ignore: avoid_print
-      print(e);
-    } finally {
-      _syncing.remove(key);
+  _syncByKey(String key) async {
+    final isSyncing = synchronizer.syncingKeys().contains(key);
+
+    if (isSyncing) return;
+
+    await synchronizer.syncByKey(key);
+  }
+
+  _syncByKeys(List<String> keys) async {
+    for (var key in keys) {
+      _syncByKey(key);
     }
   }
 }

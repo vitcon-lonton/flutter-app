@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:aqb_api/aqb_api.dart' as data hide Resource;
+import 'package:aqb_api/aqb_api.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -9,6 +9,7 @@ import 'package:resource_example/language/resource/resource.dart';
 
 class Synchronizer implements ISynchronizer {
   Synchronizer(this.api, this.storage) {
+    syncing = [];
     language = 1;
   }
 
@@ -16,26 +17,43 @@ class Synchronizer implements ISynchronizer {
   late int language;
 
   @protected
-  late Box<Resource> storage;
+  late ConfigApi api;
 
   @protected
-  late data.ConfigService api;
+  late List<String> syncing;
+
+  @protected
+  late Box<Resource> storage;
 
   @override
-  Future singleSync(String key) async {
-    final rsEncode = jsonEncode(key);
-    final response = await api.getResourceValue(language, rsEncode);
-
-    if (!response.valid) throw Exception();
-
-    final resource = Resource.now()
-        .copyWith(resourceKey: key)
-        .copyWith(languageFid: language)
-        .copyWith(resourceValue: response.responseData);
-
-    return storage.put(key, resource);
-  }
+  List<String> syncingKeys() => syncing;
 
   @override
   void updateLanguageId(int value) => language = value;
+
+  @override
+  Future<DateTime?> syncByKey(String key) async {
+    try {
+      syncing.add(key);
+
+      final encodeData = jsonEncode(key);
+      final response = await api.getResourceValue(language, encodeData);
+
+      if (!response.valid) return null;
+
+      final resource = Resource.now()
+          .copyWith(resourceKey: key)
+          .copyWith(languageFid: language)
+          .copyWith(resourceValue: response.responseData);
+
+      storage.put(key, resource);
+
+      syncing.remove(key);
+
+      return resource.createTime;
+    } catch (e) {
+      syncing.remove(key);
+      return null;
+    }
+  }
 }

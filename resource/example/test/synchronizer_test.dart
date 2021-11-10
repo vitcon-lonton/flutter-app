@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:aqb_api/aqb_api.dart' as data;
+import 'package:aqb_api/aqb_api.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -12,42 +12,42 @@ class MockBox<T> extends Mock implements Box<T> {}
 
 class MockResource extends Mock implements Resource {}
 
-class MockDataResource extends Mock implements data.Resource {}
+class MockConfigApi extends Mock implements ConfigApi {}
 
-class MockConfigApi extends Mock implements data.ConfigService {}
+class MockDataResource extends Mock implements ResourceDto {}
 
-class MockResponse<T> extends Mock implements data.BaseResponse<T> {}
+class MockResponse<T> extends Mock implements BaseResponse<T> {}
 
 void main() {
   late int languageId;
   late MockConfigApi mockApi;
   late MockBox<Resource> mockBox;
   late ISynchronizer synchronizer;
-  late List<data.Resource> mockResources;
+  late List<ResourceDto> mockResources;
 
   void generateResource() {
     mockResources = [
-      data.Resource()
+      ResourceDto()
           .copyWith(languageFid: languageId)
           .copyWith(resourceKey: 'PASSWORD')
           .copyWith(resourceValue: 'Password'),
-      data.Resource()
+      ResourceDto()
           .copyWith(languageFid: languageId)
           .copyWith(resourceKey: 'REGISTER')
           .copyWith(resourceValue: 'Register'),
-      data.Resource()
+      ResourceDto()
           .copyWith(languageFid: languageId)
           .copyWith(resourceKey: 'EMAIL')
           .copyWith(resourceValue: 'Email'),
-      data.Resource()
+      ResourceDto()
           .copyWith(languageFid: languageId)
           .copyWith(resourceKey: 'LAST_NAME')
           .copyWith(resourceValue: 'Last Name'),
-      data.Resource()
+      ResourceDto()
           .copyWith(languageFid: languageId)
           .copyWith(resourceKey: 'PHONE_NUMBER')
           .copyWith(resourceValue: 'Phone Number'),
-      data.Resource()
+      ResourceDto()
           .copyWith(languageFid: languageId)
           .copyWith(resourceKey: 'SUBMIT')
           .copyWith(resourceValue: 'Submit'),
@@ -56,9 +56,9 @@ void main() {
 
   setUpAll(() {
     registerFallbackValue<Resource>(MockResource());
-    registerFallbackValue<data.Resource>(MockDataResource());
+    registerFallbackValue<ResourceDto>(MockDataResource());
     registerFallbackValue<MockBox<Resource>>(MockBox<Resource>());
-    registerFallbackValue<data.BaseResponse<String>>(MockResponse<String>());
+    registerFallbackValue<BaseResponse<String>>(MockResponse<String>());
   });
 
   setUp(() async {
@@ -75,7 +75,7 @@ void main() {
       final mockResource = mockResources.first;
       final mockKey = mockResource.resourceKey!;
       final mockKeyEncode = jsonEncode(mockKey);
-      final successResponse = data.BaseResponse<String>(
+      final successResponse = BaseResponse<String>(
         statusCode: 200,
         message: "Success",
         responseHeader: null,
@@ -97,7 +97,7 @@ void main() {
       }).thenAnswer((_) => Future.value(null));
 
       // act
-      final result = await synchronizer.singleSync(mockKey);
+      final result = await synchronizer.syncByKey(mockKey);
 
       // assert
       verify(() => mockBox.put(mockKey, any()));
@@ -120,7 +120,7 @@ void main() {
       }).thenThrow(Exception());
 
       // act
-      final call = synchronizer.singleSync;
+      final call = synchronizer.syncByKey;
 
       // assert
       expect(() => call(mockKey), throwsA(isInstanceOf<Exception>()));

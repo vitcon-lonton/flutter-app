@@ -1,7 +1,7 @@
 library aqb_api;
 
 export 'src/models/models.dart';
-export 'src/services/services.dart';
+export 'src/api/api.dart';
 
 /// A Calculator.
 class Calculator {

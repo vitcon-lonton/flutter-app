@@ -89,16 +89,16 @@ class Rate with _$Rate {
 }
 
 @freezed
-class Resource with _$Resource {
-  factory Resource({
+class ResourceDto with _$ResourceDto {
+  factory ResourceDto({
     int? languageFid,
     String? resourceKey,
     String? resourceValue,
     String? typeOfResource,
-  }) = _Resource;
+  }) = _ResourceDto;
 
-  factory Resource.fromJson(Map<String, dynamic> json) =>
-      _$ResourceFromJson(json);
+  factory ResourceDto.fromJson(Map<String, dynamic> json) =>
+      _$ResourceDtoFromJson(json);
 }
 
 @freezed

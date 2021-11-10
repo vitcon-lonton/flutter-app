@@ -401,14 +401,15 @@ Map<String, dynamic> _$$_RateToJson(_$_Rate instance) => <String, dynamic>{
       'currencyChange': instance.currencyChange,
     };
 
-_$_Resource _$$_ResourceFromJson(Map<String, dynamic> json) => _$_Resource(
+_$_ResourceDto _$$_ResourceDtoFromJson(Map<String, dynamic> json) =>
+    _$_ResourceDto(
       languageFid: json['languageFid'] as int?,
       resourceKey: json['resourceKey'] as String?,
       resourceValue: json['resourceValue'] as String?,
       typeOfResource: json['typeOfResource'] as String?,
     );
 
-Map<String, dynamic> _$$_ResourceToJson(_$_Resource instance) =>
+Map<String, dynamic> _$$_ResourceDtoToJson(_$_ResourceDto instance) =>
     <String, dynamic>{
       'languageFid': instance.languageFid,
       'resourceKey': instance.resourceKey,

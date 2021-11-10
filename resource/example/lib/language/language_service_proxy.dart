@@ -7,7 +7,7 @@ import 'language.dart';
 import 'model.dart';
 
 class LanguageServiceProxy implements ILanguageService {
-  final ConfigService api;
+  final ConfigApi api;
   final ILanguageService service;
   final Box<HiveLanguage> languageBox;
 

@@ -1,4 +1,4 @@
-import 'package:aqb_api/aqb_api.dart' as api;
+import 'package:aqb_api/aqb_api.dart';
 import 'package:dio/dio.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
@@ -15,8 +15,8 @@ class LanguagePlugin {
   }
 
   static late final bool _ready;
+  static late final ConfigApi configApi;
   static late final ILanguageService service;
-  static late final api.ConfigService configApi;
   static late final IResourceService resourceService;
 
   factory LanguagePlugin() => _instance;
@@ -28,7 +28,7 @@ class LanguagePlugin {
   static initialized() async {
     final dio = Dio();
     dio.interceptors.add(PrettyDioLogger(requestBody: false));
-    configApi = api.ConfigService(dio);
+    configApi = ConfigApi(dio);
     Hive.registerAdapter(HiveLanguageAdapter());
     final languageBox = await Hive.openBox<HiveLanguage>('languageBox');
     final selectedLanguageBox = await Hive.openBox<int>('selectedLanguageBox');
@@ -52,9 +52,9 @@ class LanguagePlugin {
     // ..languageChange(service.language?.id ?? 1);
   }
 
-  Stream<List<api.Language>> watch() => service.watch();
+  Stream<List<Language>> watch() => service.watch();
 
-  Stream<api.Language?> watchSelected() => service.watchSelected();
+  Stream<Language?> watchSelected() => service.watchSelected();
 
   Stream<List<Resource>?> watchResource() => resourceService.watch();
 }

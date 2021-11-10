@@ -1,5 +1,5 @@
 /* spell-checker: disable */
-part of 'services.dart';
+part of 'api.dart';
 
 const getCountriesUrl = '/Countries';
 const getCurrenciesUrl = '/Currencies';
@@ -18,8 +18,8 @@ const getFlightAirportsUrl = '/Airport/SearchFlightDestinationByKeyword';
 const cache = CacheControl(maxAge: 172800, maxStale: 172800);
 
 @RestApi(baseUrl: 'https://apidemo.aqbooking.com/api/v1.0/ConfigurationAPI/')
-abstract class ConfigService {
-  factory ConfigService(Dio dio, {String baseUrl}) = _ConfigService;
+abstract class ConfigApi {
+  factory ConfigApi(Dio dio, {String baseUrl}) = _ConfigApi;
 
   @GET('https://www.aqbooking.com/about-us.html')
   Future<String> getAbout();
@@ -70,7 +70,7 @@ abstract class ConfigService {
       @Path() String base, @Path() String exchange);
 
   @POST('$getResourcesUrl/{language}')
-  Future<BaseResponse<List<Resource>>> getResources(
+  Future<BaseResponse<List<ResourceDto>>> getResources(
       @Path() int language, @Body() List<String> types);
 
   @cache

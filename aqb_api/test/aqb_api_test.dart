@@ -8,10 +8,10 @@ void main() {
   final options = BaseOptions(
       sendTimeout: 10000, connectTimeout: 10000, receiveTimeout: 10000);
   final dio = Dio(options);
-  final client = ConfigService(dio);
-  final authClient = AuthService(dio);
+  final client = ConfigApi(dio);
+  final authClient = AuthApi(dio);
   // ignore: unused_local_variable
-  final accountClient = AccountService(dio);
+  final accountClient = AccountApi(dio);
   dio.interceptors.add(PostmanDioLogger(enablePrint: true));
 
   Future<bool> testAuth() async {

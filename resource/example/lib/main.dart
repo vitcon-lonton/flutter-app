@@ -1,8 +1,7 @@
 // ignore_for_file: avoid_print
 
-import 'package:aqb_api/aqb_api.dart' as api;
+import 'package:aqb_api/aqb_api.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:resource_example/language/language.dart';
 
@@ -70,14 +69,14 @@ class LanguageOptions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<api.Language?>(
+    return ValueListenableBuilder<Language?>(
       valueListenable: languageService.selectedLanguageListenable(),
       builder: (_, selected, child) {
         if (selected != null) {
           LanguagePlugin.resourceService.languageChange(selected.id!);
         }
 
-        return ValueListenableBuilder<List<api.Language>?>(
+        return ValueListenableBuilder<List<Language>?>(
           valueListenable: languageService.languagesListenable(),
           builder: (_, languages, child) {
             if (languages?.isEmpty ?? true) return const SizedBox();

@@ -1,5 +1,5 @@
 /* spell-checker: disable */
-part of 'services.dart';
+part of 'api.dart';
 
 // const credentialKey = 'CREDENTIAL_KEY';
 // const accessTokenKey = 'ACCESS_TOKEN_KEY';
@@ -7,8 +7,8 @@ part of 'services.dart';
 const authHeader = {'requires-token': 'true'};
 
 @RestApi(baseUrl: 'https://apidemo.aqbooking.com/api/v1.0/IdentityUserAPI/')
-abstract class PaymentService {
-  factory PaymentService(Dio dio, {String baseUrl}) = _PaymentService;
+abstract class PaymentApi {
+  factory PaymentApi(Dio dio, {String baseUrl}) = _PaymentApi;
 
   @POST('/CheckOut/ProcessPayment')
   @Headers(authHeader)
@@ -16,8 +16,8 @@ abstract class PaymentService {
 }
 
 @RestApi(baseUrl: 'https://apidemo.aqbooking.com/api/v1.0/IdentityUserAPI/')
-abstract class AuthService {
-  factory AuthService(Dio dio, {String baseUrl}) = _AuthService;
+abstract class AuthApi {
+  factory AuthApi(Dio dio, {String baseUrl}) = _AuthApi;
 
   @POST('/RequestTokenAuth')
   @Headers(authHeader)
@@ -40,8 +40,8 @@ abstract class AuthService {
 }
 
 @RestApi(baseUrl: 'https://apidemo.aqbooking.com/api/v1.0/IdentityUserAPI/')
-abstract class AdminService {
-  factory AdminService(Dio dio, {String baseUrl}) = _AdminService;
+abstract class AdminApi {
+  factory AdminApi(Dio dio, {String baseUrl}) = _AdminApi;
 
   @GET('/Accounts')
   @Headers(authHeader)
@@ -57,8 +57,8 @@ abstract class AdminService {
 }
 
 @RestApi(baseUrl: 'https://apidemo.aqbooking.com/api/v1.0/IdentityUserAPI/')
-abstract class AccountService {
-  factory AccountService(Dio dio, {String baseUrl}) = _AccountService;
+abstract class AccountApi {
+  factory AccountApi(Dio dio, {String baseUrl}) = _AccountApi;
 
   @GET('/Reward/{userId}')
   @Headers(authHeader)
