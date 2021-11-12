@@ -9,6 +9,8 @@ class MockSynchronizer extends Mock implements ISynchronizer {}
 
 class MockResourceService extends Mock implements ResourceService {}
 
+class MockResourceServiceProxy extends Mock implements ResourceServiceProxy {}
+
 void main() {
   late int languageId;
   late List<Resource> mockResources;
@@ -53,7 +55,7 @@ void main() {
     languageId = 1;
     mockService = MockResourceService();
     mockSynchronizer = MockSynchronizer();
-    resourceServiceProxy = ResourceServiceProxy(mockService, mockSynchronizer);
+    resourceServiceProxy = ResourceServiceProxy(mockSynchronizer, mockService);
     generateResource();
   });
 
@@ -66,77 +68,146 @@ void main() {
       mockKey = mockResource.resourceKey!;
     });
 
-    test("should return resource when there exists with the given key",
-        () async {
-      // arrange
-      when(() => mockService.getValue(any())).thenAnswer((_) => mockResource);
+    group('Resource exist', () {
+      test("Should return resource", () async {
+        // arrange
+        when(() => mockService.getValue(any())).thenAnswer((_) => mockResource);
 
-      // act
-      final result = resourceServiceProxy.getValue(mockKey);
+        // act
+        final result = resourceServiceProxy.getValue(mockKey);
 
-      // assert
-      verify(() => mockService.getValue(mockKey));
-      expect(result, mockResource);
+        // assert
+        verify(() => mockService.getValue(mockKey));
+        verifyNever(() => mockSynchronizer.syncByKey(mockKey));
+        expect(result, mockResource);
+      });
     });
 
-    test("should return null and call singleSync when resource not exist",
-        () async {
+    group('Resource not exist', () {
       // arrange
       when(() => mockService.getValue(any())).thenAnswer((_) => null);
       when(() {
         return mockSynchronizer.syncByKey(any());
       }).thenAnswer((_) => Future.value());
 
+      test("Should call getValue", () async {
+        // act
+        resourceServiceProxy.getValue(mockKey);
+
+        // assert
+        verify(() => mockService.getValue(mockKey));
+      });
+
+      test("Should return null", () async {
+        // act
+        final result = resourceServiceProxy.getValue(mockKey);
+
+        // assert
+        expect(result, isNull);
+      });
+
+      test("Should request check key is syncing", () async {
+        // arrange
+        when(() => mockSynchronizer.isSyncing(any())).thenAnswer((_) => true);
+
+        // act
+        resourceServiceProxy.getValue(mockKey);
+
+        // assert
+        verify(() => mockSynchronizer.isSyncing(mockKey));
+      });
+    });
+  });
+
+  group('Request sync', () {
+    late String mockKey;
+    late Resource mockResource;
+
+    setUp(() {
+      mockResource = mockResources.first;
+      mockKey = mockResource.resourceKey!;
+    });
+
+    // arrange
+    when(() => mockService.getValue(any())).thenAnswer((_) => null);
+
+    test("Should check key is syncing before sync", () async {
+      // arrange
+      when(() => mockSynchronizer.isSyncing(any())).thenAnswer((_) => false);
+
       // act
-      final result = resourceServiceProxy.getValue(mockKey);
+      resourceServiceProxy.getValue(mockKey);
 
       // assert
-      verify(() => mockService.getValue(mockKey));
+      verify(() => mockSynchronizer.isSyncing(mockKey));
+    });
+
+    test("Should request sync when key is not syncing", () async {
+      // arrange
+      when(() => mockSynchronizer.isSyncing(any())).thenAnswer((_) => false);
+
+      // act
+      resourceServiceProxy.getValue(mockKey);
+
+      // assert
       verify(() => mockSynchronizer.syncByKey(mockKey));
-      expect(result, isNull);
+    });
+
+    test("Shouldn't request sync when key is syncing", () async {
+      when(() => mockSynchronizer.isSyncing(any())).thenAnswer((_) => true);
+
+      // act
+      resourceServiceProxy.getValue(mockKey);
+
+      // assert
+      verifyNever(() => mockSynchronizer.syncByKey(mockKey));
     });
   });
 
   group("getValues", () {
-    test("should return all resources in box", () {
-      // arrange
-      when(() => mockService.getValues()).thenAnswer((_) => mockResources);
+    group('Resources exist', () {
+      test("Should return all resources in box", () {
+        // arrange
+        when(() => mockService.getValues()).thenAnswer((_) => mockResources);
 
-      // act
-      final result = resourceServiceProxy.getValues();
+        // act
+        final result = resourceServiceProxy.getValues();
 
-      // assert
-      verify(() => mockService.getValues());
-      expect(result, mockResources);
+        // assert
+        verify(() => mockService.getValues());
+        expect(result, mockResources);
+      });
     });
 
-    test("should request sync resources when resources not exist", () {
-      // arrange
-      when(() => mockService.getValues()).thenAnswer((_) => []);
+    group('Resources not exist', () {
+      test("Should request sync resources when resources not exist", () {
+        // arrange
+        when(() => mockService.getValues()).thenAnswer((_) => []);
 
-      // act
-      final result = resourceServiceProxy.getValues();
+        // act
+        final result = resourceServiceProxy.getValues();
 
-      // assert
-      verify(() => mockService.getValues());
-      expect(result, mockResources);
-    });
+        // assert
+        verify(() => mockService.getValues());
+        expect(result, isEmpty);
+      });
 
-    test("should return selected resources", () {
-      final selectResources = mockResources.take(3).toList();
-      final keys = selectResources.map((e) => e.resourceKey!).toList();
+      test("Should return selected resources", () {
+        final selectResources = mockResources.take(3).toList();
+        final keys = selectResources.map((e) => e.resourceKey!).toList();
 
-      // arrange
-      when(() {
-        return mockService.getValues(keys: any(named: 'keys'));
-      }).thenAnswer((_) => selectResources);
+        // arrange
+        when(() {
+          return mockService.getValues(keys: any(named: 'keys'));
+        }).thenAnswer((_) => selectResources);
 
-      // act
-      final result = resourceServiceProxy.getValues(keys: keys);
+        // act
+        final result = resourceServiceProxy.getValues(keys: keys);
 
-      // assert
-      verify(() => mockService.getValues(keys: keys));
-      expect(result, selectResources);
+        // assert
+        verify(() => mockService.getValues(keys: keys));
+        expect(result, selectResources);
+      });
     });
   });
 }

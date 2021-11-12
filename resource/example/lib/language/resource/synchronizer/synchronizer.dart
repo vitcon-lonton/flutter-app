@@ -8,8 +8,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:resource_example/language/resource/resource.dart';
 
 class Synchronizer implements ISynchronizer {
-  Synchronizer(this.api, this.storage) {
-    syncing = [];
+  Synchronizer(this.api, this.storage, this.syncing) {
     language = 1;
   }
 
@@ -26,7 +25,7 @@ class Synchronizer implements ISynchronizer {
   late Box<Resource> storage;
 
   @override
-  List<String> syncingKeys() => syncing;
+  bool isSyncing(String key) => syncing.contains(key);
 
   @override
   void updateLanguageId(int value) => language = value;

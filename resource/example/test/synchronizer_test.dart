@@ -10,6 +10,8 @@ import 'package:resource_example/language/resource/resource.dart';
 
 class MockBox<T> extends Mock implements Box<T> {}
 
+class MockList<T> extends Mock implements List<T> {}
+
 class MockResource extends Mock implements Resource {}
 
 class MockConfigApi extends Mock implements ConfigApi {}
@@ -23,6 +25,7 @@ void main() {
   late MockConfigApi mockApi;
   late MockBox<Resource> mockBox;
   late ISynchronizer synchronizer;
+  late MockList<String> mockSyncing;
   late List<ResourceDto> mockResources;
 
   void generateResource() {
@@ -57,6 +60,7 @@ void main() {
   setUpAll(() {
     registerFallbackValue<Resource>(MockResource());
     registerFallbackValue<ResourceDto>(MockDataResource());
+    registerFallbackValue<MockList<String>>(MockList<String>());
     registerFallbackValue<MockBox<Resource>>(MockBox<Resource>());
     registerFallbackValue<BaseResponse<String>>(MockResponse<String>());
   });
@@ -65,17 +69,23 @@ void main() {
     languageId = 1;
     mockApi = MockConfigApi();
     mockBox = MockBox<Resource>();
-    synchronizer = Synchronizer(mockApi, mockBox);
+    mockSyncing = MockList<String>();
+    synchronizer = Synchronizer(mockApi, mockBox, mockSyncing);
     synchronizer.updateLanguageId(languageId);
     generateResource();
   });
 
-  group("sync resource", () {
-    test("should sync when exists with the given key", () async {
-      final mockResource = mockResources.first;
-      final mockKey = mockResource.resourceKey!;
-      final mockKeyEncode = jsonEncode(mockKey);
-      final successResponse = BaseResponse<String>(
+  group("Sync resource", () {
+    late String mockKey;
+    late String mockKeyEncode;
+    late ResourceDto mockResource;
+    late BaseResponse<String> successResponse;
+
+    setUp(() async {
+      mockResource = mockResources.first;
+      mockKey = mockResource.resourceKey!;
+      mockKeyEncode = jsonEncode(mockKey);
+      successResponse = BaseResponse<String>(
         statusCode: 200,
         message: "Success",
         responseHeader: null,
@@ -86,46 +96,84 @@ void main() {
         resourceKey: "SUCCESS",
         responseData: mockResource.resourceValue,
       );
-
-      // arrange
-      when(() {
-        return mockApi.getResourceValue(any(), any());
-      }).thenAnswer((_) async => successResponse);
-
-      when(() {
-        return mockBox.put(any(), any());
-      }).thenAnswer((_) => Future.value(null));
-
-      // act
-      final result = await synchronizer.syncByKey(mockKey);
-
-      // assert
-      verify(() => mockBox.put(mockKey, any()));
-      verify(() => mockApi.getResourceValue(languageId, mockKeyEncode));
-      expect(result, isInstanceOf<dynamic>());
-      // expect(() => call(resourceKey), returnsNormally);
-      //   final cacheResource = Resource.now()
-      // .copyWith(resourceKey: resourceKey)
-      // .copyWith(languageFid: languageId)
-      // .copyWith(resourceValue: mockResource.resourceValue);
     });
 
-    test("shouldn't sync when exists with the given key", () async {
-      final mockResource = mockResources.first;
-      final mockKey = mockResource.resourceKey!;
-      final mockKeyEncode = jsonEncode(mockKey);
+    group('API return successfully', () {
+      test("should sync to box and return DateTime", () async {
+        // arrange
+        when(() => mockSyncing.add(any())).thenAnswer((_) => {});
+        when(() => mockSyncing.remove(any())).thenAnswer((_) => true);
+        when(() {
+          return mockApi.getResourceValue(any(), any());
+        }).thenAnswer((_) async => successResponse);
+        when(() {
+          return mockBox.put(any(), any());
+        }).thenAnswer((_) => Future.value(null));
 
-      when(() {
-        return mockApi.getResourceValue(any(), any());
-      }).thenThrow(Exception());
+        // act
+        final result = await synchronizer.syncByKey(mockKey);
 
-      // act
-      final call = synchronizer.syncByKey;
+        // assert
+        verify(() => mockBox.put(mockKey, any()));
+        verify(() => mockApi.getResourceValue(languageId, mockKeyEncode));
+        expect(result, isNotNull);
+        expect(result, isInstanceOf<DateTime>());
+      });
 
-      // assert
-      expect(() => call(mockKey), throwsA(isInstanceOf<Exception>()));
-      verify(() => mockApi.getResourceValue(languageId, mockKeyEncode));
-      verifyNever(() => mockBox.put(mockKey, any()));
+      test("should add and remove from syncing List when syncing", () async {
+        // arrange
+        when(() => mockSyncing.add(any())).thenAnswer((_) => {});
+        when(() => mockSyncing.remove(any())).thenAnswer((_) => true);
+        when(() {
+          return mockApi.getResourceValue(any(), any());
+        }).thenAnswer((_) async => successResponse);
+        when(() {
+          return mockBox.put(any(), any());
+        }).thenAnswer((_) => Future.value(null));
+
+        // act
+        await synchronizer.syncByKey(mockKey);
+
+        // assert
+        verify(() => mockSyncing.add(mockKey));
+        verify(() => mockSyncing.remove(mockKey));
+      });
+    });
+
+    group('API return unsuccessfully', () {
+      test("should add and remove from syncing List when syncing", () async {
+        // arrange
+        when(() => mockSyncing.add(any())).thenAnswer((_) => {});
+        when(() => mockSyncing.remove(any())).thenAnswer((_) => true);
+        when(() {
+          return mockApi.getResourceValue(any(), any());
+        }).thenThrow(Exception());
+
+        // act
+        await synchronizer.syncByKey(mockKey);
+
+        // assert
+        verify(() => mockSyncing.add(mockKey));
+        verify(() => mockSyncing.remove(mockKey));
+      });
+
+      test("should return null and not sync to box when throw exception",
+          () async {
+        // arrange
+        when(() => mockSyncing.add(any())).thenAnswer((_) => {});
+        when(() => mockSyncing.remove(any())).thenAnswer((_) => true);
+        when(() {
+          return mockApi.getResourceValue(any(), any());
+        }).thenThrow(Exception());
+
+        // act
+        final result = await synchronizer.syncByKey(mockKey);
+
+        // assert
+        verify(() => mockApi.getResourceValue(languageId, mockKeyEncode));
+        verifyNever(() => mockBox.put(mockKey, any()));
+        expect(result, isNull);
+      });
     });
   });
 }

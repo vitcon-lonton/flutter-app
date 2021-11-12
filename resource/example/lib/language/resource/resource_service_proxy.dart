@@ -1,24 +1,31 @@
 part of 'resource.dart';
 
 class ResourceServiceProxy implements IResourceService {
-  final IResourceService service;
-  final ISynchronizer synchronizer;
+  ResourceServiceProxy(this.synchronizer, this.resourceService);
 
-  ResourceServiceProxy(this.service, this.synchronizer);
+  @protected
+  late final ISynchronizer synchronizer;
+
+  @protected
+  late final IResourceService resourceService;
 
   @override
   void languageChange(int value) {
-    service.languageChange(value);
+    resourceService.languageChange(value);
     synchronizer.updateLanguageId(value);
 
     _syncByKeys(
-      service.getValues().map((e) => e?.resourceKey).whereNotNull().toList(),
+      resourceService
+          .getValues()
+          .map((e) => e?.resourceKey)
+          .whereNotNull()
+          .toList(),
     );
   }
 
   @override
   Resource? getValue(String key) {
-    final result = service.getValue(key);
+    final result = resourceService.getValue(key);
 
     if (result == null) _syncByKey(key);
 
@@ -27,7 +34,7 @@ class ResourceServiceProxy implements IResourceService {
 
   @override
   List<Resource?> getValues({List<String>? keys}) {
-    final result = service.getValues(keys: keys);
+    final result = resourceService.getValues(keys: keys);
 
     if ((keys?.isNotEmpty ?? false) && result.contains(null)) {
       for (var i = 0; i < keys!.length; i++) {
@@ -46,21 +53,19 @@ class ResourceServiceProxy implements IResourceService {
       }
     }
 
-    return service.watch(keys: keys);
+    return resourceService.watch(keys: keys);
   }
 
   @override
-  Future clear() => service.clear();
+  Future clear() => resourceService.clear();
 
-  _syncByKey(String key) async {
-    final isSyncing = synchronizer.syncingKeys().contains(key);
+  Future _syncByKey(String key) async {
+    if (synchronizer.isSyncing(key)) return;
 
-    if (isSyncing) return;
-
-    await synchronizer.syncByKey(key);
+    return synchronizer.syncByKey(key);
   }
 
-  _syncByKeys(List<String> keys) async {
+  Future _syncByKeys(List<String> keys) async {
     for (var key in keys) {
       _syncByKey(key);
     }

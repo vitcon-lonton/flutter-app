@@ -1,5 +1,5 @@
 mixin ISynchronizer {
-  List<String> syncingKeys();
+  bool isSyncing(String key);
 
   void updateLanguageId(int value);
 

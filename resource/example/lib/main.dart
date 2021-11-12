@@ -13,7 +13,7 @@ late final ILanguageService languageService;
 init() async {
   await Hive.initFlutter();
   await LanguagePlugin.initialized();
-  languageService = LanguagePlugin.service;
+  languageService = LanguagePlugin.languageService;
 }
 
 Future<void> main() async {
