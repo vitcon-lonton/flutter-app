@@ -5,7 +5,7 @@ import 'package:aqb_api/aqb_api.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import 'package:resource_example/language/resource/resource.dart';
+import 'package:resource_example/resource/resource.dart';
 
 class Synchronizer implements ISynchronizer {
   Synchronizer(this.api, this.storage, this.syncing) {

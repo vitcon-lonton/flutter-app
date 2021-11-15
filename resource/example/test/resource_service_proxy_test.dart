@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-import 'package:resource_example/language/resource/resource.dart';
+import 'package:resource_example/resource/resource.dart';
 
 class MockResource extends Mock implements Resource {}
 
@@ -85,10 +85,13 @@ void main() {
 
     group('Resource not exist', () {
       // arrange
-      when(() => mockService.getValue(any())).thenAnswer((_) => null);
-      when(() {
-        return mockSynchronizer.syncByKey(any());
-      }).thenAnswer((_) => Future.value());
+
+      setUp(() {
+        when(() => mockService.getValue(any())).thenAnswer((_) => null);
+        when(() {
+          return mockSynchronizer.syncByKey(any());
+        }).thenAnswer((_) => Future.value());
+      });
 
       test("Should call getValue", () async {
         // act
@@ -165,18 +168,32 @@ void main() {
   });
 
   group("getValues", () {
-    group('Resources exist', () {
-      test("Should return all resources in box", () {
-        // arrange
-        when(() => mockService.getValues()).thenAnswer((_) => mockResources);
+    test("Should return all response from service", () {
+      // arrange
+      when(() => mockService.getValues()).thenAnswer((_) => mockResources);
 
-        // act
-        final result = resourceServiceProxy.getValues();
+      // act
+      final result = resourceServiceProxy.getValues();
 
-        // assert
-        verify(() => mockService.getValues());
-        expect(result, mockResources);
-      });
+      // assert
+      verify(() => mockService.getValues());
+      expect(result, mockResources);
+    });
+
+    test("Should call getValues from service with matching keys", () {
+      final selectResources = mockResources.take(3).toList();
+      final keys = selectResources.map((e) => e.resourceKey!).toList();
+
+      // arrange
+      when(() {
+        return mockService.getValues(keys: any(named: 'keys'));
+      }).thenAnswer((_) => selectResources);
+
+      // act
+      resourceServiceProxy.getValues(keys: keys);
+
+      // assert
+      verify(() => mockService.getValues(keys: keys));
     });
 
     group('Resources not exist', () {
@@ -190,23 +207,6 @@ void main() {
         // assert
         verify(() => mockService.getValues());
         expect(result, isEmpty);
-      });
-
-      test("Should return selected resources", () {
-        final selectResources = mockResources.take(3).toList();
-        final keys = selectResources.map((e) => e.resourceKey!).toList();
-
-        // arrange
-        when(() {
-          return mockService.getValues(keys: any(named: 'keys'));
-        }).thenAnswer((_) => selectResources);
-
-        // act
-        final result = resourceServiceProxy.getValues(keys: keys);
-
-        // assert
-        verify(() => mockService.getValues(keys: keys));
-        expect(result, selectResources);
       });
     });
   });

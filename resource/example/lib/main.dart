@@ -6,7 +6,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:resource_example/language/language.dart';
 
 import 'language/ilanguage_service.dart';
-import 'language/resource/resource.dart';
+import 'language_plugin.dart';
+import 'resource/resource.dart';
 
 late final ILanguageService languageService;
 

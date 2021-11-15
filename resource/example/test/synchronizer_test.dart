@@ -6,7 +6,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mocktail/mocktail.dart';
 
-import 'package:resource_example/language/resource/resource.dart';
+import 'package:resource_example/resource/resource.dart';
 
 class MockBox<T> extends Mock implements Box<T> {}
 

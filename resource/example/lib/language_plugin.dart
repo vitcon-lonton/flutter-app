@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
-import 'ilanguage_service.dart';
-import 'language_service.dart';
-import 'language_service_proxy.dart';
-import 'model.dart';
+import 'language/ilanguage_service.dart';
+import 'language/language_service.dart';
+import 'language/language_service_proxy.dart';
+import 'language/model.dart';
 import 'resource/resource.dart';
 
 class LanguagePlugin {
