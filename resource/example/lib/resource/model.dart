@@ -13,6 +13,11 @@ class Resource with _$Resource {
 
   factory Resource.now() => Resource(createTime: DateTime.now());
 
+  factory Resource.fromDto(Map<String, dynamic> json) {
+    json['createTime'] = DateTime.now().toIso8601String();
+    return Resource.fromJson(json);
+  }
+
   factory Resource.fromJson(Map<String, dynamic> json) =>
       _$ResourceFromJson(json);
 }

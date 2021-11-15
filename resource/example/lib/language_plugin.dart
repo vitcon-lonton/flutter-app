@@ -10,7 +10,7 @@ import 'language/language_service_proxy.dart';
 import 'language/model.dart';
 import 'resource/resource.dart';
 
-class LanguagePlugin {
+class LanguagePlugin implements ILanguageService {
   factory LanguagePlugin() => _instance;
 
   LanguagePlugin._() {
@@ -59,8 +59,22 @@ class LanguagePlugin {
     // ..languageChange(service.language?.id ?? 1);
   }
 
+  @override
+  Future<void> update(Language language) async {
+    await languageService.update(language);
+    return resourceService.languageChange(language.id!);
+  }
+
+  @override
+  Language? get language => languageService.language;
+
+  @override
+  List<Language>? get languages => languageService.languages;
+
+  @override
   Stream<List<Language>> watch() => languageService.watch();
 
+  @override
   Stream<Language?> watchSelected() => languageService.watchSelected();
 
   Stream<List<Resource>?> watchResource() => resourceService.watch();

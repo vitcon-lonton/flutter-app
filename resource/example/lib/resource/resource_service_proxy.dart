@@ -12,15 +12,9 @@ class ResourceServiceProxy implements IResourceService {
   @override
   void languageChange(int value) {
     resourceService.languageChange(value);
-    synchronizer.updateLanguageId(value);
-
-    _syncByKeys(
-      resourceService
-          .getValues()
-          .map((e) => e?.resourceKey)
-          .whereNotNull()
-          .toList(),
-    );
+    synchronizer
+      ..updateLanguageId(value)
+      ..reSync();
   }
 
   @override
@@ -65,9 +59,9 @@ class ResourceServiceProxy implements IResourceService {
     return synchronizer.syncByKey(key);
   }
 
-  Future _syncByKeys(List<String> keys) async {
-    for (var key in keys) {
-      _syncByKey(key);
-    }
-  }
+  // Future _syncByKeys(List<String> keys) async {
+  //   for (var key in keys) {
+  //     _syncByKey(key);
+  //   }
+  // }
 }

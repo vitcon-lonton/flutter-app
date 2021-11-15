@@ -38,7 +38,11 @@ class Synchronizer implements ISynchronizer {
       final encodeData = jsonEncode(key);
       final response = await api.getResourceValue(language, encodeData);
 
-      if (!response.valid) return null;
+      if (!response.valid) {
+        syncing.remove(key);
+
+        return null;
+      }
 
       final resource = Resource.now()
           .copyWith(resourceKey: key)
@@ -54,5 +58,14 @@ class Synchronizer implements ISynchronizer {
       syncing.remove(key);
       return null;
     }
+  }
+
+  @override
+  Future reSync() async {
+    final keys = storage.values.map((e) => e.resourceKey).where((e) {
+      return e != null;
+    }).toList();
+
+    await Future.wait(keys.map((key) => syncByKey(key!)));
   }
 }
