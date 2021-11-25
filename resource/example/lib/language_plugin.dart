@@ -77,7 +77,7 @@ class LanguagePlugin implements ILanguageService {
   @override
   Stream<Language?> watchSelected() => languageService.watchSelected();
 
-  Stream<List<Resource>?> watchResource() => resourceService.watch();
+  Stream<List<Resource>?> watchResources() => resourceService.watch();
 }
 
 

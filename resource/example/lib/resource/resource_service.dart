@@ -1,6 +1,8 @@
 part of 'resource.dart';
 
 class ResourceService implements IResourceService {
+  final expireTime = const Duration(days: 1);
+
   ResourceService(this.box) {
     language = 1;
   }
@@ -38,5 +40,19 @@ class ResourceService implements IResourceService {
     }
 
     return box.watch().map((event) => box.values.toList());
+  }
+
+  @override
+  bool checkValidResource(String key) {
+    final resource = box.get(key);
+
+    if (resource == null) return false;
+
+    final now = DateTime.now();
+    final createTime = resource.createTime;
+    final isExpire =
+        createTime.isBefore(now) && createTime.difference(now) > expireTime;
+
+    return isExpire ? false : true;
   }
 }

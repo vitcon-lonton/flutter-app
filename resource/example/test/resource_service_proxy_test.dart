@@ -3,13 +3,7 @@ import 'package:mocktail/mocktail.dart';
 
 import 'package:resource_example/resource/resource.dart';
 
-class MockResource extends Mock implements Resource {}
-
-class MockSynchronizer extends Mock implements ISynchronizer {}
-
-class MockResourceService extends Mock implements ResourceService {}
-
-class MockResourceServiceProxy extends Mock implements ResourceServiceProxy {}
+import 'mock.dart';
 
 void main() {
   late int languageId;

@@ -18,6 +18,11 @@ class ResourceServiceProxy implements IResourceService {
   }
 
   @override
+  bool checkValidResource(String key) {
+    return resourceService.checkValidResource(key);
+  }
+
+  @override
   Resource? getValue(String key) {
     final result = resourceService.getValue(key);
 
@@ -58,10 +63,4 @@ class ResourceServiceProxy implements IResourceService {
 
     return synchronizer.syncByKey(key);
   }
-
-  // Future _syncByKeys(List<String> keys) async {
-  //   for (var key in keys) {
-  //     _syncByKey(key);
-  //   }
-  // }
 }

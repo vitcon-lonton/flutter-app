@@ -1,10 +1,8 @@
 import 'package:mocktail/mocktail.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:resource_example/resource/resource.dart';
 
-class MockBox<T> extends Mock implements Box<T> {}
+import 'mock.dart';
 
 void main() {
   late int languageId;

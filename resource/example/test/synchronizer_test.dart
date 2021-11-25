@@ -2,23 +2,11 @@ import 'dart:convert';
 
 import 'package:aqb_api/aqb_api.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mocktail/mocktail.dart';
 
 import 'package:resource_example/resource/resource.dart';
 
-class MockBox<T> extends Mock implements Box<T> {}
-
-class MockList<T> extends Mock implements List<T> {}
-
-class MockResource extends Mock implements Resource {}
-
-class MockConfigApi extends Mock implements ConfigApi {}
-
-class MockDataResource extends Mock implements ResourceDto {}
-
-class MockResponse<T> extends Mock implements BaseResponse<T> {}
+import 'mock.dart';
 
 void main() {
   late int languageId;
