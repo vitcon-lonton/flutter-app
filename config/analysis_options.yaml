@@ -1,0 +1,16 @@
+include: package:flutter_lints/flutter.yaml
+
+# Additional information about this file can be found at
+# https://dart.dev/guides/language/analysis-options
+analyzer:
+  exclude: 
+    - [build/**]
+    - lib/**/*.g.dart
+    - lib/**/*.freezed.dart
+    - lib/*.g.dart
+    - lib/*.freezed.dart
+
+linter:
+  rules:
+    - camel_case_types
+    - prefer_const_declarations
